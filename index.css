@@ -1,0 +1,303 @@
+/* Custom Styles for ComeBack Moçambique */
+
+/* Proximity Alert Toast Grid Layout */
+#proximity-alert-toast {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr;
+  gap: 0.875rem;
+}
+
+#proximity-alert-toast.is-minimized {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 0.5rem 0.85rem !important;
+  border-radius: 9999px !important;
+  width: auto !important;
+  max-width: min(calc(100vw - 1.5rem), 380px) !important;
+  cursor: pointer !important;
+}
+
+#proximity-alert-toast .proximity-toast-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+#proximity-alert-toast .proximity-toast-body {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.875rem;
+  align-items: start;
+  width: 100%;
+}
+
+/* Media Query: Extra-Small Screens switch layout to a single column while keeping distance and countdown persistent in the header row */
+@media (max-width: 480px) {
+  #proximity-alert-toast {
+    grid-template-columns: 1fr !important;
+    max-width: calc(100vw - 1.5rem) !important;
+    right: 0.75rem !important;
+    bottom: 0.75rem !important;
+    padding: 1rem !important;
+  }
+
+  #proximity-alert-toast .proximity-toast-header {
+    display: grid !important;
+    grid-template-columns: 1fr auto !important; /* Retain persistent header columns */
+    align-items: center !important;
+    gap: 0.35rem !important;
+  }
+
+  #proximity-alert-toast .proximity-toast-body {
+    grid-template-columns: 1fr !important; /* Single column on extra-small screens */
+    gap: 0.65rem !important;
+  }
+
+  #proximity-alert-toast .proximity-toast-icon {
+    display: none !important;
+  }
+}
+
+/* Smooth scale and shadow transition on #map-view container hover with permanent high z-index */
+#map-view {
+  position: relative;
+  z-index: 50;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, box-shadow;
+}
+
+#map-view:hover {
+  transform: scale(1.006);
+  box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.18), 0 8px 16px -4px rgba(0, 0, 0, 0.08);
+}
+
+/* Leaflet Map Popup Custom Styling for #map-view */
+#map-view .leaflet-popup-content-wrapper,
+#community-risk-map-section .leaflet-popup-content-wrapper,
+.custom-item-details-popup .leaflet-popup-content-wrapper {
+  padding: 0 !important;
+  border-radius: 1.25rem !important;
+  box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.22), 0 4px 12px -2px rgba(0, 0, 0, 0.12) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden !important;
+}
+
+/* Suave transição de opacidade 'transition-opacity duration-300' ao abrir o popup */
+.leaflet-fade-anim .leaflet-popup,
+.leaflet-popup {
+  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+#map-view .leaflet-popup-content,
+#community-risk-map-section .leaflet-popup-content,
+.custom-item-details-popup .leaflet-popup-content,
+.leaflet-popup-content {
+  margin: 0 !important;
+  line-height: normal !important;
+  width: 260px !important;
+  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+  animation: leafletPopupSmoothFadeIn 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+@keyframes leafletPopupSmoothFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.97) translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Botões de Ação dentro do popup com estados táteis e hover distintos */
+.leaflet-popup-content button,
+.leaflet-popup-content a[href],
+.leaflet-popup-content [role="button"] {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Hover state distinto para usabilidade em dispositivos apontadores e tácteis */
+.leaflet-popup-content button:hover,
+.leaflet-popup-content a[href]:hover,
+.leaflet-popup-content [role="button"]:hover {
+  filter: brightness(1.1) !important;
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.25) !important;
+  transform: translateY(-1.5px) !important;
+}
+
+/* Estado active/toque instantâneo otimizado para dispositivos móveis e tácteis */
+.leaflet-popup-content button:active,
+.leaflet-popup-content a[href]:active,
+.leaflet-popup-content [role="button"]:active {
+  transform: scale(0.95) !important;
+  filter: brightness(0.92) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15) !important;
+}
+
+#map-view .leaflet-popup-tip-container,
+#community-risk-map-section .leaflet-popup-tip-container,
+.custom-item-details-popup .leaflet-popup-tip-container {
+  margin-top: -1px !important;
+}
+
+#map-view .leaflet-container a.leaflet-popup-close-button,
+#community-risk-map-section .leaflet-container a.leaflet-popup-close-button,
+.custom-item-details-popup a.leaflet-popup-close-button {
+  top: 8px !important;
+  right: 8px !important;
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 50% !important;
+  background: rgba(0, 0, 0, 0.55) !important;
+  backdrop-filter: blur(4px) !important;
+  color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  z-index: 10 !important;
+  transition: all 0.2s ease !important;
+}
+
+#map-view .leaflet-container a.leaflet-popup-close-button:hover,
+#community-risk-map-section .leaflet-container a.leaflet-popup-close-button:hover,
+.custom-item-details-popup a.leaflet-popup-close-button:hover {
+  background: rgba(0, 0, 0, 0.85) !important;
+  transform: scale(1.08) !important;
+}
+
+/* Custom Marker Cluster Styles for ComeBack Radar */
+.custom-item-cluster-marker {
+  background: transparent !important;
+  border: none !important;
+}
+.leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow {
+  transition: transform 0.25s ease-out, opacity 0.25s ease-in;
+}
+
+/* Destaque visual e Efeito de Brilho Dinâmico (Glow) do Cluster Selecionado no Radar (#feed-google-maps-section) */
+#feed-google-maps-section .cluster-marker-selected,
+.cluster-marker-selected {
+  z-index: 1000 !important;
+  cursor: pointer !important;
+}
+
+#feed-google-maps-section .cluster-marker-selected > div,
+.cluster-marker-selected > div {
+  transform: scale(1.18) !important;
+  opacity: 0.92 !important;
+  filter: drop-shadow(0 0 14px rgba(252, 225, 0, 0.9)) drop-shadow(0 0 24px rgba(0, 143, 226, 0.8)) !important;
+  animation: clusterActivePulse 2.2s ease-in-out infinite alternate !important;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), 
+              filter 0.25s ease-out, 
+              opacity 0.25s ease-out !important;
+}
+
+/* Aura interna do cluster selecionado */
+#feed-google-maps-section .cluster-marker-selected .cluster-aura-glow,
+.cluster-marker-selected .cluster-aura-glow {
+  opacity: 0.55 !important;
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease !important;
+}
+
+#feed-google-maps-section .cluster-marker-selected .cluster-core-circle,
+.cluster-marker-selected .cluster-core-circle {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+/* Efeito de Brilho Dinâmico (Glow) Intensificado no Hover (passagem do rato) */
+#feed-google-maps-section .cluster-marker-selected:hover,
+#feed-google-maps-section .cluster-marker-selected.cluster-marker-hovered,
+.cluster-marker-selected:hover,
+.cluster-marker-selected.cluster-marker-hovered {
+  z-index: 1250 !important;
+}
+
+#feed-google-maps-section .cluster-marker-selected:hover > div,
+#feed-google-maps-section .cluster-marker-selected.cluster-marker-hovered > div,
+.cluster-marker-selected:hover > div,
+.cluster-marker-selected.cluster-marker-hovered > div {
+  transform: scale(1.3) !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.95)) 
+          drop-shadow(0 0 28px rgba(252, 225, 0, 1)) 
+          drop-shadow(0 0 45px rgba(0, 240, 255, 1)) 
+          drop-shadow(0 0 65px rgba(0, 143, 226, 0.9)) 
+          drop-shadow(0 0 85px rgba(21, 50, 104, 0.85)) !important;
+  animation: clusterDynamicHoverGlow 1.2s ease-in-out infinite alternate !important;
+}
+
+/* Intensificação da aura externa no hover */
+#feed-google-maps-section .cluster-marker-selected:hover .cluster-aura-glow,
+#feed-google-maps-section .cluster-marker-selected.cluster-marker-hovered .cluster-aura-glow,
+.cluster-marker-selected:hover .cluster-aura-glow,
+.cluster-marker-selected.cluster-marker-hovered .cluster-aura-glow {
+  opacity: 1 !important;
+  transform: scale(1.5) !important;
+  filter: blur(5px) drop-shadow(0 0 18px rgba(252, 225, 0, 1)) drop-shadow(0 0 28px rgba(0, 240, 255, 0.9)) !important;
+}
+
+/* Reflexo e borda brilhante ultra-nítida no círculo do cluster ao passar o rato */
+#feed-google-maps-section .cluster-marker-selected:hover .cluster-core-circle,
+#feed-google-maps-section .cluster-marker-selected.cluster-marker-hovered .cluster-core-circle,
+.cluster-marker-selected:hover .cluster-core-circle,
+.cluster-marker-selected.cluster-marker-hovered .cluster-core-circle {
+  border-color: #ffffff !important;
+  box-shadow: 0 0 24px rgba(252, 225, 0, 1), 
+              0 0 44px rgba(0, 240, 255, 0.85), 
+              inset 0 0 14px rgba(255, 255, 255, 0.6) !important;
+}
+
+@keyframes clusterActivePulse {
+  0% {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 12px rgba(252, 225, 0, 0.9)) drop-shadow(0 0 20px rgba(0, 143, 226, 0.7));
+  }
+  100% {
+    transform: scale(1.22);
+    filter: drop-shadow(0 0 20px rgba(252, 225, 0, 1)) drop-shadow(0 0 32px rgba(0, 240, 255, 0.95));
+  }
+}
+
+@keyframes clusterDynamicHoverGlow {
+  0% {
+    transform: scale(1.28);
+    filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.9)) 
+            drop-shadow(0 0 26px rgba(252, 225, 0, 0.95)) 
+            drop-shadow(0 0 40px rgba(0, 240, 255, 0.9)) 
+            drop-shadow(0 0 58px rgba(0, 143, 226, 0.85));
+  }
+  100% {
+    transform: scale(1.34);
+    filter: drop-shadow(0 0 22px rgba(255, 255, 255, 1)) 
+            drop-shadow(0 0 36px rgba(252, 225, 0, 1)) 
+            drop-shadow(0 0 54px rgba(0, 240, 255, 1)) 
+            drop-shadow(0 0 78px rgba(0, 143, 226, 0.95)) 
+            drop-shadow(0 0 100px rgba(21, 50, 104, 0.9));
+  }
+}
+
+/* Baliza de Identificação para o Cluster Ativo */
+.cluster-sonar-beacon {
+  pointer-events: none !important;
+  transition: filter 0.25s ease-out, opacity 0.25s ease-out !important;
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 12s linear infinite;
+}
+

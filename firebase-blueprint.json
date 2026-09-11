@@ -1,0 +1,250 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with verification status.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "isVerified": { "type": "boolean" },
+        "isAdmin": { "type": "boolean" },
+        "isSuperAdmin": { "type": "boolean" },
+        "documentImageUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "smsNotificationsEnabled": { "type": "boolean" },
+        "criticalSmsOfflineEnabled": { "type": "boolean" },
+        "notificationSound": { "type": "string" },
+        "emergencyContacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "phone": { "type": "string" }
+            },
+            "required": ["name", "phone"]
+          }
+        },
+        "fcmTokens": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "lastFcmSync": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "phone", "email", "isVerified", "createdAt"]
+    },
+    "Item": {
+      "title": "Item",
+      "description": "Lost or found item.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string" },
+        "status": { "type": "string" },
+        "location": { "type": "string" },
+        "province": { "type": "string" },
+        "reward": { "type": "number" },
+        "date": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "imageUrls": { "type": "array", "items": { "type": "string" } },
+        "userId": { "type": "string" },
+        "ownerName": { "type": "string" },
+        "ownerPhone": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
+        "transitLatitude": { "type": "number" },
+        "transitLongitude": { "type": "number" },
+        "isTrackingActive": { "type": "boolean" },
+        "deliveryLocation": { "type": "string" },
+        "deliveryLatitude": { "type": "number" },
+        "deliveryLongitude": { "type": "number" },
+        "sharesCount": { "type": "number" }
+      },
+      "required": ["id", "title", "category", "status", "province", "createdAt"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Chat message between users.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "itemId": { "type": "string" },
+        "senderId": { "type": "string" },
+        "receiverId": { "type": "string" },
+        "text": { "type": "string" },
+        "type": { "type": "string" },
+        "mediaUrl": { "type": "string" },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "itemId", "senderId", "receiverId", "timestamp"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "User notification.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "type": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "itemId": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "isRead": { "type": "boolean" }
+      },
+      "required": ["id", "userId", "type", "title", "timestamp", "isRead"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "Visual comments, updates, sightings and details under items.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "itemId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userPhoto": { "type": "string" },
+        "text": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "itemId", "userId", "userName", "text", "createdAt"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "Double-sided evaluations for item posts and user profiles recorded after a successful transaction (reunion).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "itemId": { "type": "string" },
+        "itemTitle": { "type": "string" },
+        "reviewerId": { "type": "string" },
+        "reviewerName": { "type": "string" },
+        "reviewerPhoto": { "type": "string" },
+        "targetUserId": { "type": "string" },
+        "itemRating": { "type": "number", "description": "Rating of the item accuracy or condition (1-5)" },
+        "userRating": { "type": "number", "description": "Rating of the user cooperation/trustworthiness (1-5)" },
+        "feedback": { "type": "string", "description": "Feedback comments from the transaction" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "itemId", "itemTitle", "reviewerId", "reviewerName", "targetUserId", "itemRating", "userRating", "feedback", "createdAt"]
+    },
+    "DangerReport": {
+      "title": "DangerReport",
+      "description": "Information regarding dangerous hotspots, recurring robberies or local threat levels reported by community users on items.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "itemId": { "type": "string" },
+        "itemTitle": { "type": "string" },
+        "reportedBy": { "type": "string" },
+        "reporterName": { "type": "string" },
+        "location": { "type": "string" },
+        "province": { "type": "string" },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "itemId", "itemTitle", "reportedBy", "reporterName", "location", "province", "latitude", "longitude", "description", "createdAt"]
+    },
+    "InsuredPhone": {
+      "title": "InsuredPhone",
+      "description": "Device registered for insurance with IMEI and location tracking logs.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "brand": { "type": "string" },
+        "model": { "type": "string" },
+        "imei": { "type": "string" },
+        "insuranceTier": { "type": "string" },
+        "contactNumber": { "type": "string" },
+        "currentSimNumber": { "type": "string" },
+        "status": { "type": "string" },
+        "coverageValue": { "type": "number" },
+        "registeredAt": { "type": "string" },
+        "trackingEnabled": { "type": "boolean" },
+        "imeiVerified": { "type": "boolean" },
+        "simSwaps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "timestamp": { "type": "string" },
+              "oldSim": { "type": "string" },
+              "newSim": { "type": "string" },
+              "newPhoneInserted": { "type": "string" },
+              "latitude": { "type": "number" },
+              "longitude": { "type": "number" },
+              "sentToAuthority": { "type": "boolean" }
+            }
+          }
+        }
+      },
+      "required": ["id", "userId", "brand", "model", "imei", "insuranceTier", "registeredAt"]
+    },
+    "SmsGatewayConfig": {
+      "title": "SmsGatewayConfig",
+      "description": "SMS Hook Settings configuration for local Mozambican Providers or Twilio integrations",
+      "type": "object",
+      "properties": {
+        "webhookUrl": { "type": "string" },
+        "method": { "type": "string" },
+        "headersText": { "type": "string" },
+        "payloadTemplate": { "type": "string" },
+        "isActive": { "type": "boolean" },
+        "useRealWebhook": { "type": "boolean" },
+        "lastTestedAt": { "type": "string" },
+        "lastTestStatus": { "type": "string" },
+        "lastTestResponse": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "users": {
+      "schema": "User",
+      "description": "Collection of user profiles."
+    },
+    "items": {
+      "schema": "Item",
+      "description": "Collection of lost and found items."
+    },
+    "messages": {
+      "schema": "Message",
+      "description": "Collection of chat messages."
+    },
+    "notifications": {
+      "schema": "Notification",
+      "description": "Collection of user notifications."
+    },
+    "comments": {
+      "schema": "Comment",
+      "description": "Comments and sightings on lost or found items."
+    },
+    "dangerReports": {
+      "schema": "DangerReport",
+      "description": "Danger / High-risk hazard zones reported for potential thefts and recurring community crimes."
+    },
+    "reviews": {
+      "schema": "Review",
+      "description": "Collection of double-sided evaluations and ratings for post items and user profiles."
+    },
+    "settings": {
+      "schema": "SmsGatewayConfig",
+      "description": "Configuration settings, e.g. custom SMS Webhook configs"
+    },
+    "insured_phones": {
+      "schema": "InsuredPhone",
+      "description": "Collection of insured devices and tracking systems"
+    }
+  }
+}

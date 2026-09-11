@@ -1,0 +1,345 @@
+
+import { Item, ItemStatus, Category } from './types';
+
+export const MOZAMBIQUE_PROVINCES = [
+  'Maputo Cidade', 'Maputo Província', 'Gaza', 'Inhambane', 'Sofala', 
+  'Manica', 'Tete', 'Zambézia', 'Nampula', 'Niassa', 'Cabo Delgado'
+];
+
+export const COMMISSION_FEE_PERCENT = 0.05;
+export const MAINTENANCE_FEE_PERCENT = 0.07;
+export const LOST_ITEM_SURCHARGE_PERCENT = 0.30;
+export const TOTAL_FEE_PERCENT = 0.12;
+
+export const INITIAL_ITEMS: Item[] = [
+  {
+    id: '1',
+    title: 'Bilhete de Identidade - João Mutola',
+    description: 'BI encontrado na paragem da Malhangalene. Nome João Paulo Mutola.',
+    category: Category.DOCUMENTS,
+    status: ItemStatus.FOUND,
+    location: 'Malhangalene, Maputo',
+    province: 'Maputo Cidade',
+    date: '2024-05-15',
+    imageUrl: 'https://picsum.photos/seed/idcard/400/300',
+    imageUrls: [
+      'https://picsum.photos/seed/idcard1/400/300',
+      'https://picsum.photos/seed/idcard2/400/300',
+      'https://picsum.photos/seed/idcard3/400/300'
+    ],
+    userId: 'u1',
+    ownerName: 'Ricardo Mavila',
+    ownerPhone: '+258841234567',
+    createdAt: new Date().toISOString(),
+    latitude: -25.9610,
+    longitude: 32.5855,
+    transitLatitude: 0,
+    transitLongitude: 0,
+    isTrackingActive: false
+  },
+  {
+    id: '2',
+    title: 'iPhone 13 Pro Max Azul',
+    description: 'Perdi meu iPhone perto do Shopping Baía. Tem uma capa transparente.',
+    category: Category.ELECTRONICS,
+    status: ItemStatus.LOST,
+    location: 'Shopping Baía',
+    province: 'Maputo Cidade',
+    reward: 5000,
+    date: '2024-05-14',
+    imageUrl: 'https://picsum.photos/seed/iphone/400/300',
+    imageUrls: [
+      'https://picsum.photos/seed/iphone1/400/300',
+      'https://picsum.photos/seed/iphone2/400/300'
+    ],
+    userId: 'u2',
+    ownerName: 'Sofia Tembe',
+    ownerPhone: '+258829876543',
+    createdAt: new Date().toISOString(),
+    latitude: -25.9754,
+    longitude: 32.5992,
+    transitLatitude: 0,
+    transitLongitude: 0,
+    isTrackingActive: false
+  },
+  {
+    id: '3',
+    title: 'Pastor Alemão - Thor',
+    description: 'Cão Pastor Alemão com coleira vermelha, desapareceu na zona da Sommerschield.',
+    category: Category.PETS,
+    status: ItemStatus.LOST,
+    location: 'Sommerschield, Maputo',
+    province: 'Maputo Cidade',
+    reward: 10000,
+    date: '2024-05-16',
+    imageUrl: 'https://images.unsplash.com/photo-1589944197705-408249a1501b?auto=format&fit=crop&q=80&w=400',
+    imageUrls: [
+      'https://images.unsplash.com/photo-1589944197705-408249a1501b?auto=format&fit=crop&q=80&w=400',
+      'https://images.unsplash.com/photo-1560743604-017cd1041103?auto=format&fit=crop&q=80&w=400'
+    ],
+    userId: 'u3',
+    ownerName: 'Claudio Bento',
+    ownerPhone: '+258844567890',
+    createdAt: new Date().toISOString(),
+    latitude: -25.9525,
+    longitude: 32.5933,
+    transitLatitude: 0,
+    transitLongitude: 0,
+    isTrackingActive: false
+  },
+  {
+    id: '4',
+    title: 'Pasta de Documentos Executiva',
+    description: 'Encontrei uma pasta preta com vários documentos e um cartão de residente.',
+    category: Category.DOCUMENTS,
+    status: ItemStatus.FOUND,
+    location: 'Avenida 24 de Julho',
+    province: 'Maputo Cidade',
+    date: '2024-05-17',
+    imageUrl: 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=400',
+    userId: 'u4',
+    ownerName: 'Isabel Mondlane',
+    ownerPhone: '+258871234567',
+    createdAt: new Date().toISOString(),
+    latitude: -25.9658,
+    longitude: 32.5812,
+    transitLatitude: 0,
+    transitLongitude: 0,
+    isTrackingActive: false
+  },
+  {
+    id: '5',
+    title: 'Chaves de Carro Toyota',
+    description: 'Chaves com comando Toyota encontradas no parque do Zimpeto.',
+    category: Category.KEYS,
+    status: ItemStatus.FOUND,
+    location: 'Estádio do Zimpeto',
+    province: 'Maputo Província',
+    date: '2024-05-18',
+    imageUrl: 'https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?auto=format&fit=crop&q=80&w=400',
+    userId: 'u5',
+    ownerName: 'Zito Matsinhe',
+    ownerPhone: '+258859998877',
+    createdAt: new Date().toISOString(),
+    latitude: -25.8455,
+    longitude: 32.6122,
+    transitLatitude: 0,
+    transitLongitude: 0,
+    isTrackingActive: false
+  },
+  {
+    id: '6',
+    title: 'Samsung Galaxy S23 Ultra',
+    description: 'Telemóvel roubado na zona da Baixa. Tinha capa preta.',
+    category: Category.ELECTRONICS,
+    status: ItemStatus.STOLEN,
+    location: 'Baixa de Maputo',
+    province: 'Maputo Cidade',
+    date: '2024-05-18',
+    imageUrl: 'https://images.unsplash.com/photo-1678911820864-e2c567c655d7?auto=format&fit=crop&q=80&w=400',
+    userId: 'u6',
+    ownerName: 'Mário Silva',
+    ownerPhone: '+258821112233',
+    createdAt: new Date().toISOString(),
+    latitude: -25.9723,
+    longitude: 32.5711,
+    transitLatitude: 0,
+    transitLongitude: 0,
+    isTrackingActive: false
+  },
+  {
+    id: '7',
+    title: 'Mochila Escolar Azul',
+    description: 'Encontrei uma mochila escolar azul com livros da 10ª classe no Chaimite.',
+    category: Category.OTHERS,
+    status: ItemStatus.FOUND,
+    location: 'Chaimite, Beira',
+    province: 'Sofala',
+    date: '2024-05-18',
+    imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=400',
+    userId: 'u7',
+    ownerName: 'Samuel Sitoe',
+    ownerPhone: '+258864455667',
+    createdAt: new Date().toISOString(),
+    latitude: -19.8317,
+    longitude: 34.8367,
+    transitLatitude: 0,
+    transitLongitude: 0,
+    isTrackingActive: false
+  },
+  {
+    id: '8',
+    title: 'Gata Siamês - Nina',
+    description: 'Gata siamês muito dócil desapareceu no bairro Tofo. Tem olhos azuis intensos.',
+    category: Category.PETS,
+    status: ItemStatus.LOST,
+    location: 'Praia do Tofo',
+    province: 'Inhambane',
+    reward: 3500,
+    date: '2024-05-17',
+    imageUrl: 'https://images.unsplash.com/photo-1513245543132-31f507417b26?auto=format&fit=crop&q=80&w=400',
+    userId: 'u8',
+    ownerName: 'Alice Macuácua',
+    ownerPhone: '+258847778899',
+    createdAt: new Date().toISOString(),
+    latitude: -23.8544,
+    longitude: 35.5331,
+    transitLatitude: 0,
+    transitLongitude: 0,
+    isTrackingActive: false
+  },
+  {
+    id: '9',
+    title: 'MacBook Air M2 Cinzento',
+    description: 'Laptop roubado de dentro do carro na zona da Matola Rio.',
+    category: Category.ELECTRONICS,
+    status: ItemStatus.STOLEN,
+    location: 'Matola Rio',
+    province: 'Maputo Província',
+    date: '2024-05-18',
+    imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=400',
+    userId: 'u9',
+    ownerName: 'Filipe Nyusi',
+    ownerPhone: '+258861111111',
+    createdAt: new Date().toISOString(),
+    latitude: -25.9617,
+    longitude: 32.4633,
+    transitLatitude: 0,
+    transitLongitude: 0,
+    isTrackingActive: false
+  },
+  {
+    id: '10',
+    title: 'Bolsa Gucci Vermelha',
+    description: 'Encontrada bolsa de luxo no mercado de Xai-Xai. Contém maquiagem e chaves.',
+    category: Category.BAGS,
+    status: ItemStatus.FOUND,
+    location: 'Mercado Central de Xai-Xai',
+    province: 'Gaza',
+    date: '2024-05-18',
+    imageUrl: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=400',
+    userId: 'u10',
+    ownerName: 'Deolinda Gove',
+    ownerPhone: '+258850000000',
+    createdAt: new Date().toISOString(),
+    latitude: -25.0519,
+    longitude: 33.6447,
+    transitLatitude: 0,
+    transitLongitude: 0,
+    isTrackingActive: false
+  },
+  {
+    id: '11',
+    title: 'Drone DJI Mini 3 Pro',
+    description: 'Drone perdido enquanto filmava na zona da Ponta do Ouro. Fugiu com o vento.',
+    category: Category.ELECTRONICS,
+    status: ItemStatus.LOST,
+    location: 'Ponta do Ouro',
+    province: 'Maputo Província',
+    reward: 8000,
+    date: '2024-05-18',
+    imageUrl: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&q=80&w=400',
+    userId: 'u11',
+    ownerName: 'Ricardo Santos',
+    ownerPhone: '+258840001122',
+    createdAt: new Date().toISOString(),
+    latitude: -26.8456,
+    longitude: 32.8889,
+    transitLatitude: 0,
+    transitLongitude: 0,
+    isTrackingActive: false
+  },
+  {
+    id: '12',
+    title: 'Carteira de Pele Castanha',
+    description: 'Encontrada carteira com documentos em nome de Alberto Chissano no Jardim Tunduru.',
+    category: Category.WALLETS,
+    status: ItemStatus.FOUND,
+    location: 'Jardim Tunduru, Maputo',
+    province: 'Maputo Cidade',
+    date: '2024-05-18',
+    imageUrl: 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&q=80&w=400',
+    userId: 'u12',
+    ownerName: 'Fernando Leite',
+    ownerPhone: '+258823334455',
+    createdAt: new Date().toISOString(),
+    latitude: -25.9701,
+    longitude: 32.5732,
+    transitLatitude: 0,
+    transitLongitude: 0,
+    isTrackingActive: false
+  },
+  {
+    id: '13',
+    title: 'Husky Siberiano - Luna',
+    description: 'Husky fêmea cinzenta e branca com olhos azuis. Desapareceu no Bairro da Polana.',
+    category: Category.PETS,
+    status: ItemStatus.LOST,
+    location: 'Polana Cimento',
+    province: 'Maputo Cidade',
+    reward: 12000,
+    date: '2024-05-18',
+    imageUrl: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&q=80&w=400',
+    userId: 'u13',
+    ownerName: 'Elena Maciel',
+    ownerPhone: '+258849990000',
+    createdAt: new Date().toISOString(),
+    latitude: -25.9688,
+    longitude: 32.5922,
+    transitLatitude: 0,
+    transitLongitude: 0,
+    isTrackingActive: false
+  },
+  {
+    id: '14',
+    title: 'Relógio Rolex Submariner',
+    description: 'Relógio de luxo roubado durante assalto na via pública em frente ao Polana Shopping.',
+    category: Category.JEWELRY,
+    status: ItemStatus.STOLEN,
+    location: 'Polana Shopping',
+    province: 'Maputo Cidade',
+    date: '2024-05-18',
+    imageUrl: 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&q=80&w=400',
+    userId: 'u14',
+    ownerName: 'Telmo Silva',
+    ownerPhone: '+258861234567',
+    createdAt: new Date().toISOString(),
+    latitude: -25.9695,
+    longitude: 32.5955,
+    transitLatitude: 0,
+    transitLongitude: 0,
+    isTrackingActive: false
+  }
+];
+
+export interface PoliceStation {
+  name: string;
+  province?: string;
+  lat: number;
+  lng: number;
+  phone?: string;
+  address?: string;
+}
+
+export const POLICE_STATIONS: PoliceStation[] = [
+  // Maputo Cidade
+  { name: "PRM Esquadra Central (Maputo)", province: "Maputo Cidade", lat: -25.9682, lng: 32.5732, phone: "+258 21 325 031", address: "Av. 25 de Setembro, Centro da Cidade" },
+  { name: "PRM 1ª Esquadra (Baixa - Porto)", province: "Maputo Cidade", lat: -25.9723, lng: 32.5695, phone: "+258 21 320 111", address: "Rua do Bagamoyo / Baixa" },
+  { name: "PRM 3ª Esquadra (Alto Maé)", province: "Maputo Cidade", lat: -25.9615, lng: 32.5710, phone: "+258 21 400 120", address: "Av. Eduardo Mondlane, Alto Maé" },
+  { name: "PRM 7ª Esquadra (Malhangalene)", province: "Maputo Cidade", lat: -25.9548, lng: 32.5921, phone: "+258 21 415 500", address: "Rua de Malhangalene" },
+  { name: "PRM 18ª Esquadra (Sommerschield)", province: "Maputo Cidade", lat: -25.9512, lng: 32.6022, phone: "+258 21 492 333", address: "Av. do Palmar, Sommerschield 2" },
+  { name: "PRM 5ª Esquadra (Chamanculo)", province: "Maputo Cidade", lat: -25.9575, lng: 32.5534, phone: "+258 21 401 234", address: "Av. das FPLM, Chamanculo" },
+  { name: "PRM Esquadra de Triunfo (Costa do Sol)", province: "Maputo Cidade", lat: -25.9085, lng: 32.6288, phone: "+258 21 450 112", address: "Av. Marginal / Bairro do Triunfo" },
+  // Maputo Província / Matola
+  { name: "PRM 14ª Esquadra (Machava)", province: "Maputo Província", lat: -25.9189, lng: 32.5112, phone: "+258 21 750 090", address: "Estrada da Machava, Matola" },
+  { name: "Comando Provincial PRM (Matola)", province: "Maputo Província", lat: -25.9620, lng: 32.4630, phone: "+258 21 720 011", address: "Av. União Africana, Matola" },
+  // Sofala / Beira
+  { name: "PRM 1ª Esquadra da Beira (Chaimite)", province: "Sofala", lat: -19.8317, lng: 34.8367, phone: "+258 23 322 033", address: "Bairro Chaimite, Beira" },
+  { name: "PRM Esquadra Central da Beira", province: "Sofala", lat: -19.8385, lng: 34.8420, phone: "+258 23 324 100", address: "Av. das FPLM, Baixa da Beira" },
+  // Inhambane
+  { name: "PRM Comando da Cidade de Inhambane", province: "Inhambane", lat: -23.8650, lng: 35.3833, phone: "+258 29 320 022", address: "Av. da Independência, Inhambane" },
+  // Nampula
+  { name: "PRM Esquadra Central de Nampula", province: "Nampula", lat: -15.1165, lng: 39.2666, phone: "+258 26 212 121", address: "Av. do Trabalho, Nampula" },
+  // Tete
+  { name: "PRM Comando Provincial de Tete", province: "Tete", lat: -16.1564, lng: 33.5863, phone: "+258 25 220 030", address: "Av. 25 de Junho, Tete" }
+];

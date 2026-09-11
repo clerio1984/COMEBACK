@@ -1,0 +1,12 @@
+{
+  "name": "ComeBack Moçambique - Perdidos e Achados",
+  "description": "Plataforma avançada de perdidos e achados com busca inteligente por IA, geolocalização e sistema de notificações de matches automáticos.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
