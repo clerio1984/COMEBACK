@@ -11,6 +11,7 @@ import { onMessage } from 'firebase/messaging';
 import { MonetizationHub } from './MonetizationHub';
 import { RewardsHistorySection } from './RewardsHistorySection';
 import { VerificationTutorial } from './VerificationTutorial';
+import { AdminQuickVerificationPanel } from './AdminQuickVerificationPanel';
 import { SOUND_OPTIONS, playNotificationSound } from '../services/audio';
 import { MediaViewer } from './MediaViewer';
 
@@ -1416,13 +1417,31 @@ const AuthView: React.FC<AuthViewProps> = ({ onMyPosts, onAdminDashboard }) => {
           <span>Conta Verificada</span>
         </div>
       )}
-      <div className="flex items-center justify-center gap-2 mb-6">
+      <div className="flex items-center justify-center gap-2 mb-4">
         <span className="text-gray-400 font-bold text-[10px] uppercase tracking-widest">{currentUser.phone || 'Sem Telefone'}</span>
         <span className="w-1.5 h-1.5 rounded-full bg-gray-200"></span>
         <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md ${currentUser.isVerified ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600'}`}>
           {currentUser.isVerified ? 'Verificado' : 'Pendente Verificação'}
         </span>
       </div>
+
+      {(currentUser.isAdmin || currentUser.isSuperAdmin || currentUser.canVerifyDocuments) && (
+        <div className="flex items-center justify-center mb-6">
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById('admin-quick-verification-panel');
+              el?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 dark:hover:bg-emerald-900/60 border border-emerald-300/80 dark:border-emerald-800 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer shadow-2xs active:scale-95"
+            id="profile-quick-admin-verification-badge"
+            title="Ir para o Painel de Configuração Rápida de Verificação de Documentos"
+          >
+            <ShieldCheck size={14} className="text-emerald-600" />
+            <span>Gestão Rápida de Verificação de Documentos ⚡</span>
+          </button>
+        </div>
+      )}
 
       {/* Accordion List de Avaliações Recebidas no Perfil */}
       <div className="max-w-md mx-auto mb-8 bg-gray-50/50 border border-gray-100 rounded-[2rem] overflow-hidden text-left shadow-2xs">
@@ -2270,6 +2289,16 @@ const AuthView: React.FC<AuthViewProps> = ({ onMyPosts, onAdminDashboard }) => {
           </div>
         ) : (
           <>
+            {/* Painel de Configuração Rápida de Verificação de Documentos para Administradores e Verificadores */}
+            {(currentUser?.isAdmin || currentUser?.isSuperAdmin || currentUser?.canVerifyDocuments) && (
+              <div className="mb-4">
+                <AdminQuickVerificationPanel 
+                  currentUser={currentUser} 
+                  onOpenFullDashboard={onAdminDashboard}
+                />
+              </div>
+            )}
+
             {currentUser?.isAdmin && onAdminDashboard && (
               <button 
                 onClick={onAdminDashboard}

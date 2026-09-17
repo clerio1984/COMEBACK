@@ -42,6 +42,23 @@ const Layout: React.FC<LayoutProps> = ({
   const highContrast = false;
   const [showReconnect, setShowReconnect] = useState(false);
   const [prevOnline, setPrevOnline] = useState(isOnline);
+  const [showOfflineModal, setShowOfflineModal] = useState<boolean>(false);
+  const [browserOnline, setBrowserOnline] = useState<boolean>(() => {
+    return typeof navigator !== 'undefined' ? navigator.onLine : true;
+  });
+
+  useEffect(() => {
+    const handleOnline = () => setBrowserOnline(true);
+    const handleOffline = () => setBrowserOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  const effectiveIsOnline = isOnline && browserOnline;
 
   const [onlineCount, setOnlineCount] = useState<number>(() => {
     const hour = new Date().getHours();
@@ -137,6 +154,50 @@ const Layout: React.FC<LayoutProps> = ({
           </div>
           
           <div className="flex gap-2 items-center relative z-10">
+            {/* Indicador Visual Claro de Dispositivo Offline na Barra de Navegação */}
+            {!effectiveIsOnline && (
+              <div className="relative group">
+                <button 
+                  type="button"
+                  onClick={() => setShowOfflineModal(true)}
+                  className="flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-amber-500/25 to-orange-500/25 hover:from-amber-500/40 hover:to-orange-500/40 active:scale-95 text-amber-200 hover:text-white border border-amber-300/60 hover:border-amber-200 px-2 sm:px-2.5 py-1.5 rounded-xl transition-all duration-200 cursor-pointer shadow-sm backdrop-blur-xs select-none h-10"
+                  title="Dispositivo Offline: Os seus dados estão a ser guardados localmente no aparelho"
+                  id="navbar-offline-cloud-status"
+                >
+                  {/* Ícone de nuvem com indicador de erro/alerta */}
+                  <div className="relative flex items-center justify-center shrink-0">
+                    <i className="fa-solid fa-cloud text-amber-300 text-sm sm:text-base animate-pulse"></i>
+                    <span className="absolute -top-1 -right-1.5 bg-red-600 text-white rounded-full w-3.5 h-3.5 flex items-center justify-center text-[7px] font-black border border-[#0f224a] shadow-2xs">
+                      <i className="fa-solid fa-triangle-exclamation text-[6px]"></i>
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col text-left leading-none">
+                    <div className="flex items-center gap-1">
+                      <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-amber-100 flex items-center gap-1">
+                        Offline
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>
+                      </span>
+                    </div>
+                    <span className="hidden sm:inline text-[7.5px] font-bold text-amber-200/90 tracking-tight mt-0.5">
+                      Guardado Localmente
+                    </span>
+                  </div>
+                </button>
+
+                {/* Tooltip Informativo Desktop */}
+                <div className="absolute right-0 top-full mt-2 w-64 bg-slate-900/95 text-white p-3 rounded-2xl shadow-xl border border-amber-400/40 text-left hidden lg:group-hover:block z-50 pointer-events-none backdrop-blur-md">
+                  <div className="flex items-center gap-1.5 text-amber-300 font-black uppercase text-[9.5px] tracking-wider mb-1">
+                    <i className="fa-solid fa-cloud-slash text-xs"></i>
+                    <span>Modo Offline Ativo</span>
+                  </div>
+                  <p className="text-[11px] text-slate-200 leading-relaxed font-medium">
+                    Sem ligação à internet. Não se preocupe: os seus dados e publicações estão a ser <span className="text-amber-300 font-bold">guardados com segurança no armazenamento local</span> deste dispositivo e serão sincronizados assim que a ligação for restabelecida.
+                  </p>
+                </div>
+              </div>
+            )}
+
             <button 
               onClick={onToggleNotifications}
               className="text-white hover:bg-white/15 active:scale-95 transition-all p-2 rounded-xl flex items-center justify-center h-10 w-10 cursor-pointer relative"
@@ -520,6 +581,24 @@ const Layout: React.FC<LayoutProps> = ({
         </footer>
       </main>
 
+      {/* Alerta Compacto Flutuante para Dispositivos Móveis */}
+      {!effectiveIsOnline && (
+        <div 
+          onClick={() => setShowOfflineModal(true)}
+          className="fixed bottom-[4.75rem] left-1/2 -translate-x-1/2 z-40 bg-gradient-to-r from-amber-600/95 via-orange-600/95 to-amber-700/95 text-white px-3.5 py-1.5 rounded-full shadow-lg border border-amber-300/40 backdrop-blur-md flex items-center gap-2 text-[10px] font-black uppercase tracking-wider cursor-pointer active:scale-95 transition-all select-none animate-in fade-in"
+          id="mobile-bottom-offline-pill"
+          title="Dispositivo Offline: Toque para mais informações sobre o armazenamento local"
+        >
+          <div className="relative flex items-center justify-center shrink-0">
+            <i className="fa-solid fa-cloud text-amber-200 text-xs"></i>
+            <span className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full w-2.5 h-2.5 flex items-center justify-center text-[5px] font-black">
+              !
+            </span>
+          </div>
+          <span className="truncate max-w-[240px]">Offline • Guardado no Aparelho</span>
+        </div>
+      )}
+
       {/* Floating Bottom Nav - Styled with Souto Brand Colors */}
       <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-lg bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 flex justify-between py-1.5 px-2.5 z-50 shadow-[0_10px_35px_rgba(15,34,74,0.18)] rounded-3xl transition-all duration-300 items-center">
         <button 
@@ -585,6 +664,77 @@ const Layout: React.FC<LayoutProps> = ({
           <span className="text-[10px] sm:text-xs mt-0.5 uppercase tracking-wider font-black">{t('Perfil')}</span>
         </button>
       </nav>
+
+      {/* Modal Informativo de Modo Offline & Armazenamento Local Seguro */}
+      {showOfflineModal && (
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in">
+          <div 
+            className="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-md w-full shadow-2xl border border-amber-400/40 space-y-5 text-left relative overflow-hidden"
+            id="offline-info-modal"
+          >
+            {/* Header com ícone de nuvem com alerta */}
+            <div className="flex items-start gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700/60 flex items-center justify-center shrink-0 relative">
+                <i className="fa-solid fa-cloud text-amber-600 dark:text-amber-400 text-xl"></i>
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[8px] font-black border-2 border-white dark:border-slate-900">
+                  <i className="fa-solid fa-triangle-exclamation text-[7px]"></i>
+                </span>
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800">
+                    Dispositivo Offline
+                  </span>
+                  <button 
+                    onClick={() => setShowOfflineModal(false)}
+                    className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 cursor-pointer"
+                    title="Fechar"
+                  >
+                    <i className="fa-solid fa-xmark text-lg"></i>
+                  </button>
+                </div>
+                <h3 className="text-lg font-black text-slate-900 dark:text-white mt-1">
+                  Dados a Salvar Localmente
+                </h3>
+              </div>
+            </div>
+
+            {/* Explicação clara e tranquilizadora */}
+            <div className="space-y-3 text-xs text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-700/60">
+              <div className="flex items-start gap-2.5">
+                <i className="fa-solid fa-hard-drive text-amber-500 text-sm mt-0.5 shrink-0"></i>
+                <p>
+                  <strong className="text-slate-900 dark:text-white font-bold">Armazenamento Local Ativo:</strong> Pode continuar a utilizar o ComeBack. As suas publicações, mensagens e alterações estão a ser guardadas com segurança no armazenamento local deste aparelho.
+                </p>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <i className="fa-solid fa-arrows-rotate text-emerald-500 text-sm mt-0.5 shrink-0"></i>
+                <p>
+                  <strong className="text-slate-900 dark:text-white font-bold">Sincronização Automática:</strong> Assim que recuperar o sinal de internet ou Wi-Fi, todos os dados pendentes serão enviados automaticamente para o sistema sem perdas.
+                </p>
+              </div>
+            </div>
+
+            {/* Estado da Conexão */}
+            <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 dark:text-slate-400 px-1">
+              <span>Estado da Ligação:</span>
+              <span className="text-amber-600 dark:text-amber-400 font-black uppercase flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+                Sem Rede (Armazenamento Local)
+              </span>
+            </div>
+
+            {/* Botão de confirmação */}
+            <button
+              type="button"
+              onClick={() => setShowOfflineModal(false)}
+              className="w-full py-3 px-4 bg-gradient-to-r from-[#0f224a] to-[#008fe2] text-white rounded-xl font-black text-xs uppercase tracking-wider hover:opacity-95 active:scale-98 transition-all cursor-pointer shadow-md"
+            >
+              Compreendi, Continuar a Navegar
+            </button>
+          </div>
+        </div>
+      )}
 
 
 

@@ -9,7 +9,6 @@ import { COMMISSION_FEE_PERCENT, MAINTENANCE_FEE_PERCENT, TOTAL_FEE_PERCENT } fr
 import { useAuth } from '../AuthContext';
 import { useLanguage } from '../LanguageContext';
 import { VisualPortraitBuilder } from './VisualPortraitBuilder';
-import { ItemGeolocationHistory } from './ItemGeolocationHistory';
 import { db, handleFirestoreError, OperationType } from '../services/firebase';
 import { collection, addDoc, serverTimestamp, doc, getDoc, getDocs, query, where, getCountFromServer, setDoc, updateDoc, onSnapshot, deleteDoc } from 'firebase/firestore';
 import { compressImage } from '../services/imageUtils';
@@ -1113,12 +1112,6 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item: initialItem, allContext
             </button>
           </div>
         </div>
-
-        {/* Instância Única e Consolidada de Visualização de Mapa (Interativo & Rastreio) */}
-        <ItemGeolocationHistory 
-          item={item} 
-          canAddWaypoint={currentUser ? (currentUser.id === item.userId || currentUser.isAdmin || currentUser.isSuperAdmin || item.status === ItemStatus.IN_TRANSIT) : true} 
-        />
 
         {/* Dynamic Safety Checklist Component */}
         <div className="bg-amber-500/5 dark:bg-amber-400/5 p-5 sm:p-6 rounded-2xl sm:rounded-3xl border-2 border-amber-500/20 dark:border-amber-400/15 text-left space-y-4 shadow-xs">

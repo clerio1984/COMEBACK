@@ -33,6 +33,8 @@ export interface User {
   isVerified: boolean;
   isAdmin?: boolean;
   isSuperAdmin?: boolean;
+  canVerifyDocuments?: boolean;
+  verificationNote?: string;
   rating?: number;
   documentImageUrl?: string;
   createdAt: string;
