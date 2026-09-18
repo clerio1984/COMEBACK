@@ -637,10 +637,10 @@ Retorne a resposta estritamente conforme o JSON esquema fornecido.`;
   } catch (error: any) {
     logSafeWarning("rota /api/verify-document", error);
     // Graceful verification fallback when quota is exceeded or an API error occurs
-    return res.json({
-      isValid: true,
-      reason: "Documento carregado provisoriamente (IA no Modo de Segurança - Alta Procura).",
-      extractedName: "Não disponível temporariamente",
+    return res.status(503).json({
+      isValid: false,
+      reason: "Não foi possível validar o documento neste momento. Tente novamente.",
+      extractedName: "",
       documentNumber: ""
     });
   }
@@ -729,13 +729,13 @@ Retorne a resposta estritamente conforme o JSON esquema fornecido.`;
   } catch (error: any) {
     logSafeWarning("rota /api/extract-document-data", error);
     // Graceful extraction fallback when Gemini quota/limits are hit
-    return res.json({
-      docType: "Bilhete de Identidade",
-      name: "Titular do Documento",
+    return res.status(503).json({
+      docType: "Outro",
+      name: "",
       number: "",
-      province: "Maputo Cidade",
-      title: "Documento de Identidade Encontrado",
-      description: "Documento de identificação oficial encontrado e registado na plataforma ComeBack Moçambique. Recomenda-se que o titular contacte o anunciante para confirmar os pormenores."
+      province: "",
+      title: "",
+      description: "Não foi possível extrair os dados do documento neste momento. Tente novamente."
     });
   }
 });
