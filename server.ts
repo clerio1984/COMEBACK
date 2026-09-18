@@ -15,14 +15,19 @@ const db = firebaseConfig.firestoreDatabaseId
   : getFirestore(firebaseApp);
 
 // Inicializar Chaves VAPID estáveis para o Web Push
-const vapidPublicKey = process.env.VAPID_PUBLIC_KEY || "BJnjmch1cQH0iUX35auZ1_Dby0M_v-xos1K_dV7WMuHTDMV-iG5VsJZXjJ92mJPlC89aw0npJQCcC3H9_uVON_I";
-const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY || "VPk7MoBM1uE1-_JGs0YQe_DRY6ZJRIvZgcQ6iSMJe4M";
+const vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
+const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY;
+const vapidConfigured = Boolean(vapidPublicKey && vapidPrivateKey);
 
-webpush.setVapidDetails(
-  "mailto:clerio1984@gmail.com",
-  vapidPublicKey,
-  vapidPrivateKey
-);
+if (vapidConfigured) {
+  webpush.setVapidDetails(
+    "mailto:clerio1984@gmail.com",
+    vapidPublicKey!,
+    vapidPrivateKey!
+  );
+} else {
+  console.warn("[Push Server] VAPID não configurado. Defina VAPID_PUBLIC_KEY e VAPID_PRIVATE_KEY no ambiente do servidor.");
+}
 
 const app = express();
 const PORT = 3000;
