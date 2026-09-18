@@ -38,40 +38,56 @@ const ADMIN_EMAILS = new Set([
   "admin@comeback.co.mz"
 ]);
 
-async function requireAuthenticatedUser(req: express.Request, res: express.Response): Promise<string | null> {
+let adminAuth: import("firebase-admin/auth").Auth | null = null;
+
+async function getAdminAuth() {
+  if (adminAuth) return adminAuth;
+  const { getApps, initializeApp: initializeAdminApp, cert, getAuth } = await import("firebase-admin/app").then(m => ({
+    getApps: m.getApps,
+    initializeApp: m.initializeApp,
+    cert: m.cert
+  })).then(async x => ({ ...x, getAuth: (await import("firebase-admin/auth")).getAuth }));
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+  const projectId = process.env.FIREBASE_PROJECT_ID || firebaseConfig.projectId;
+  if (!privateKey || !clientEmail || !projectId) {
+    throw new Error("Firebase Admin não configurado no servidor.");
+  }
+  const adminApp = getApps().length
+    ? getApps()[0]
+    : initializeAdminApp({
+        credential: cert({ projectId, clientEmail, privateKey })
+      });
+  adminAuth = getAuth(adminApp);
+  return adminAuth;
+}
+
+async function requireAuthenticatedUser(req: express.Request, res: express.Response): Promise<import("firebase-admin/auth").DecodedIdToken | null> {
   const header = req.headers.authorization;
   const token = typeof header === "string" && header.startsWith("Bearer ")
     ? header.slice(7).trim()
     : "";
-
   if (!token) {
     res.status(401).json({ error: "Autenticação obrigatória." });
     return null;
   }
-
   try {
-    const { getAuth } = await import("firebase/auth");
-    const firebaseAuth = getAuth(firebaseApp);
-    const credential = await import("firebase/auth").then(m => m.signInWithCustomToken);
-    void credential;
-    const decoded = JSON.parse(Buffer.from(token.split(".")[1] || "", "base64url").toString("utf8") || "{}");
-    if (!decoded.sub || decoded.exp * 1000 < Date.now()) throw new Error("Token inválido.");
-    return decoded.sub;
+    return await (await getAdminAuth()).verifyIdToken(token);
   } catch {
     res.status(401).json({ error: "Sessão inválida ou expirada." });
     return null;
   }
 }
 
-function requireAdmin(req: express.Request, res: express.Response): boolean {
-  const email = typeof req.headers["x-user-email"] === "string"
-    ? req.headers["x-user-email"].trim().toLowerCase()
-    : "";
-  if (!ADMIN_EMAILS.has(email)) {
+async function requireAdmin(req: express.Request, res: express.Response): Promise<import("firebase-admin/auth").DecodedIdToken | null> {
+  const decoded = await requireAuthenticatedUser(req, res);
+  if (!decoded) return null;
+  const email = decoded.email?.trim().toLowerCase();
+  if (!decoded.email_verified || !email || !ADMIN_EMAILS.has(email)) {
     res.status(403).json({ error: "Acesso reservado a administradores." });
-    return false;
+    return null;
   }
-  return true;
+  return decoded;
 }
 
 app.use(express.json({ limit: "50mb" }));
@@ -1044,7 +1060,7 @@ app.post("/api/smart-suggestions", async (req, res) => {
 
 // API Endpoint para despachar notificações push reais via Service Workers (Web Push)
 app.post("/api/trigger-push", async (req, res) => {
-  if (!requireAdmin(req, res)) return;
+  if (!(await requireAdmin(req, res))) return;
   try {
     if (!vapidConfigured) {
       return res.status(503).json({ error: "Web Push não está configurado no servidor." });
@@ -1121,7 +1137,7 @@ app.post("/api/trigger-push", async (req, res) => {
 
 // API Endpoint to simulate/trigger SMS notification for high-value items
 app.post("/api/trigger-sms", async (req, res) => {
-  if (!requireAdmin(req, res)) return;
+  if (!(await requireAdmin(req, res))) return;
   try {
     const { userId, title, body } = req.body;
     if (!userId) {
@@ -1259,7 +1275,7 @@ app.post("/api/trigger-sms", async (req, res) => {
 
 // API Endpoint to instantly test custom admin SMS Webhook integration
 app.post("/api/test-sms-webhook", async (req, res) => {
-  if (!requireAdmin(req, res)) return;
+  if (!(await requireAdmin(req, res))) return;
   try {
     const { webhookUrl, method, headersText, payloadTemplate, testPhone, testMessage } = req.body;
     
