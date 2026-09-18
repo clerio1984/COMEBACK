@@ -131,6 +131,13 @@ function enforceRateLimit(scope: string, max = 20, windowMs = 60_000) {
     next();
   };
 }
+function validateTextField(value: unknown, field: string, maxLength: number): string | null {
+  if (value == null) return null;
+  if (typeof value !== "string") return `O campo ${field} é inválido.`;
+  if (value.length > maxLength) return `O campo ${field} excede o limite permitido.`;
+  return null;
+}
+
 async function isUnsafeHost(hostname: string): Promise<boolean> {
   const host = hostname.trim().toLowerCase();
   if (host === "localhost" || host.endsWith(".localhost") || host === "0.0.0.0" || host === "::1" || host.endsWith(".local")) return true;
@@ -235,6 +242,10 @@ app.post("/api/suggest-improvements", enforceRateLimit("ai-suggest-improvements"
 
     if (!title) {
        return res.status(400).json({ error: "O título do item é obrigatório para gerar melhorias." });
+    }
+    for (const [field, value, max] of [["title", title, 300], ["description", description, 5000], ["location", location, 300], ["province", province, 100]] as const) {
+      const validationError = validateTextField(value, field, max);
+      if (validationError) return res.status(400).json({ error: validationError });
     }
 
     const ai = getAiClient();
