@@ -125,8 +125,8 @@ const Layout: React.FC<LayoutProps> = ({
                 <h1 className="text-lg font-black tracking-tight leading-none text-white">ComeBack</h1>
                 <span className="text-[10px] font-bold text-sky-200 uppercase tracking-widest leading-none block mt-0.5">Perdidos e Achados</span>
               </div>
-            </div>
-          </button>
+            </button>
+          </div>
           
           <div className="flex gap-2 items-center relative z-10">
             {/* Indicador Visual Claro de Dispositivo Offline na Barra de Navegação */}
