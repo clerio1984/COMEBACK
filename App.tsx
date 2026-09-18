@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo, useEffect, useRef, Suspense, lazy } from 'react';
-import { authenticatedFetch } from './services/firebase';
+import { apiFetch, authenticatedFetch } from './services/firebase';
 import Layout from './components/Layout';
 import ItemCard from './components/ItemCard';
 import NotificationDrawer from './components/NotificationDrawer';
@@ -1540,7 +1540,7 @@ const AppContent: React.FC = () => {
     const delayDebounceFn = setTimeout(async () => {
       setIsSearchingSemantically(true);
       try {
-        const response = await authenticatedFetch('/api/semantic-search', {
+        const response = await apiFetch('/api/semantic-search', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
