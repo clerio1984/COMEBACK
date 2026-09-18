@@ -844,8 +844,7 @@ app.post("/api/semantic-search", async (req, res) => {
     const ai = getAiClient();
 
     // 1. Obter todos os itens em tempo real no Firestore
-    const itemsCol = collection(db, "items");
-    const snapshot = await getDocs(itemsCol);
+    const snapshot = await getServerDbCached().collection("items").get();
     const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }) as any);
 
     if (items.length === 0) {
@@ -893,8 +892,7 @@ app.post("/api/semantic-search", async (req, res) => {
             serverEmbeddingCache.set(item.id, itemVector);
 
             // Gravar em background no Firestore para que persista para todas as futuras pesquisas
-            const itemDocRef = doc(db, "items", item.id);
-            await updateDoc(itemDocRef, { embedding: itemVector });
+            await getServerDbCached().collection("items").doc(item.id).update({ embedding: itemVector });
           }
         } catch (embedErr: any) {
           logSafeWarning("processamento de embedding individual de item", embedErr);
@@ -1163,8 +1161,8 @@ app.post("/api/trigger-sms", async (req, res) => {
       return res.status(400).json({ error: "O campo userId é obrigatório." });
     }
 
-    const userDocRef = doc(db, "users", userId);
-    const userDocSnap = await getDoc(userDocRef);
+    const userDocRef = getServerDbCached().collection("users").doc(userId);
+    const userDocSnap = await userDocRef.get();
     if (!userDocSnap.exists()) {
       return res.status(404).json({ error: "Utilizador não encontrado no sistema." });
     }
