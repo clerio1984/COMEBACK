@@ -7,6 +7,9 @@ import { initializeApp } from "firebase/app";
 import { getApps as getAdminApps, initializeApp as initializeAdminApp, cert } from "firebase-admin/app";
 import { getFirestore as getAdminFirestore } from "firebase-admin/firestore";
 import fs from "fs";
+import dns from "dns/promises";
+import net from "net";
+import { getAuth } from "firebase-admin/auth";
 
 // Sincronizar leitura de configurações do Firebase
 const firebaseConfig = JSON.parse(fs.readFileSync(path.resolve("./firebase-applet-config.json"), "utf8"));
@@ -59,22 +62,15 @@ let adminAuth: import("firebase-admin/auth").Auth | null = null;
 
 async function getAdminAuth() {
   if (adminAuth) return adminAuth;
-  const { getApps, initializeApp: initializeAdminApp, cert, getAuth } = await import("firebase-admin/app").then(m => ({
-    getApps: m.getApps,
-    initializeApp: m.initializeApp,
-    cert: m.cert
-  })).then(async x => ({ ...x, getAuth: (await import("firebase-admin/auth")).getAuth }));
   const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
   const projectId = process.env.FIREBASE_PROJECT_ID || firebaseConfig.projectId;
   if (!privateKey || !clientEmail || !projectId) {
     throw new Error("Firebase Admin não configurado no servidor.");
   }
-  const adminApp = getApps().length
-    ? getApps()[0]
-    : initializeAdminApp({
-        credential: cert({ projectId, clientEmail, privateKey })
-      });
+  const adminApp = getAdminApps().length
+    ? getAdminApps()[0]
+    : initializeAdminApp({ credential: cert({ projectId, clientEmail, privateKey }) });
   adminAuth = getAuth(adminApp);
   return adminAuth;
 }
@@ -107,8 +103,56 @@ async function requireAdmin(req: express.Request, res: express.Response): Promis
   return decoded;
 }
 
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ limit: "50mb", extended: true }));
+app.use(express.json({ limit: "8mb" }));
+app.use(express.urlencoded({ limit: "1mb", extended: true }));
+
+type RateEntry = { count: number; resetAt: number };
+const rateStore = new Map<string, RateEntry>();
+function rateLimit(key: string, max: number, windowMs: number) {
+  const now = Date.now();
+  const current = rateStore.get(key);
+  if (!current || current.resetAt <= now) {
+    rateStore.set(key, { count: 1, resetAt: now + windowMs });
+    return true;
+  }
+  current.count += 1;
+  return current.count <= max;
+}
+function clientKey(req: express.Request, scope: string) {
+  const forwarded = req.headers["x-forwarded-for"];
+  const ip = typeof forwarded === "string" ? forwarded.split(",")[0].trim() : req.ip || "unknown";
+  return scope + ":" + ip;
+}
+function enforceRateLimit(scope: string, max = 20, windowMs = 60_000) {
+  return (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    if (!rateLimit(clientKey(req, scope), max, windowMs)) {
+      return res.status(429).json({ error: "Muitas solicitações. Tente novamente em instantes." });
+    }
+    next();
+  };
+}
+async function isUnsafeHost(hostname: string): Promise<boolean> {
+  const host = hostname.trim().toLowerCase();
+  if (host === "localhost" || host.endsWith(".localhost") || host === "0.0.0.0" || host === "::1" || host.endsWith(".local")) return true;
+  const addresses = net.isIP(host) ? [host] : (await dns.lookup(host, { all: true })).map(a => a.address);
+  return addresses.some(address => {
+    if (net.isIPv4(address)) {
+      const [a,b] = address.split(".").map(Number);
+      return a === 10 || a === 127 || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || a === 0;
+    }
+    const normalized = address.toLowerCase();
+    return normalized === "::1" || normalized.startsWith("fc") || normalized.startsWith("fd") || normalized.startsWith("fe80:");
+  });
+}
+async function validateExternalUrl(raw: string): Promise<URL> {
+  if (!raw || raw.length > 2048) throw new Error("URL inválida.");
+  const parsed = new URL(raw);
+  if (!["http:", "https:"].includes(parsed.protocol)) throw new Error("URL inválida.");
+  if (parsed.username || parsed.password) throw new Error("URL inválida.");
+  if (await isUnsafeHost(parsed.hostname)) throw new Error("Destino não permitido.");
+  return parsed;
+}
+
 
 // Lazy-initialize Gemini so the server doesn't crash on boot if GEMINI_API_KEY is not set yet
 let aiClient: GoogleGenAI | null = null;
@@ -144,48 +188,48 @@ function logSafeWarning(context: string, error: any) {
 const safetyTipCache = new Map<string, string>();
 
 // API endpoint to proxy external images for IndexedDB offline storage
-app.get("/api/proxy-image", async (req, res) => {
+app.get("/api/proxy-image", enforceRateLimit("proxy-image", 30), async (req, res) => {
   try {
-    const imageUrl = req.query.url as string;
-    if (!imageUrl || typeof imageUrl !== "string") {
-      return res.status(400).json({ error: "Parâmetro 'url' é obrigatório." });
+    let target = await validateExternalUrl(String(req.query.url || ""));
+    let response: Response | null = null;
+    for (let redirects = 0; redirects <= 2; redirects++) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 8000);
+      try {
+        response = await fetch(target, {
+          signal: controller.signal,
+          redirect: "manual",
+          headers: { "User-Agent": "ComeBack/1.0", Accept: "image/*" }
+        });
+      } finally {
+        clearTimeout(timeout);
+      }
+      if (response.status >= 300 && response.status < 400) {
+        const location = response.headers.get("location");
+        if (!location || redirects === 2) return res.status(400).json({ error: "Redirecionamento externo não permitido." });
+        target = await validateExternalUrl(new URL(location, target).toString());
+        continue;
+      }
+      break;
     }
-
-    if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
-      return res.status(400).json({ error: "URL inválida." });
-    }
-
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 9000);
-
-    const response = await fetch(imageUrl, {
-      signal: controller.signal,
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) ComeBack/1.0",
-        Accept: "image/*,*/*;q=0.8",
-      },
-    });
-    clearTimeout(timeout);
-
-    if (!response.ok) {
-      return res.status(response.status).json({ error: `Falha ao obter imagem: ${response.statusText}` });
-    }
-
-    const contentType = response.headers.get("content-type") || "image/jpeg";
+    if (!response || !response.ok) return res.status(502).json({ error: "Falha ao obter imagem." });
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.toLowerCase().startsWith("image/")) return res.status(415).json({ error: "O recurso remoto não é uma imagem." });
+    const declaredLength = Number(response.headers.get("content-length") || 0);
+    if (declaredLength > 5 * 1024 * 1024) return res.status(413).json({ error: "Imagem demasiado grande." });
     const arrayBuffer = await response.arrayBuffer();
+    if (arrayBuffer.byteLength > 5 * 1024 * 1024) return res.status(413).json({ error: "Imagem demasiado grande." });
     const buffer = Buffer.from(arrayBuffer);
-    const base64 = buffer.toString("base64");
-    const dataUrl = `data:${contentType};base64,${base64}`;
-
+    const dataUrl = "data:" + contentType.split(";")[0] + ";base64," + buffer.toString("base64");
     res.setHeader("Cache-Control", "public, max-age=86400");
-    return res.json({ dataUrl, contentType, size: buffer.length });
-  } catch (err: any) {
-    return res.status(500).json({ error: err.message || "Erro ao fazer proxy de imagem." });
+    return res.json({ dataUrl, contentType: contentType.split(";")[0], size: buffer.length });
+  } catch {
+    return res.status(400).json({ error: "Não foi possível obter a imagem." });
   }
 });
 
 // API endpoint for AI description suggestions
-app.post("/api/suggest-improvements", async (req, res) => {
+app.post("/api/suggest-improvements", enforceRateLimit("ai-suggest-improvements", 20), async (req, res) => {
   try {
     const { title, category, status, description, location, province } = req.body;
 
@@ -288,7 +332,7 @@ function getFallbackSafetyTip(category: string, status: string, lang = "pt"): st
 }
 
 // API endpoint for AI Safety Tips based on Category and optional Status
-app.post("/api/safety-tip", async (req, res) => {
+app.post("/api/safety-tip", enforceRateLimit("ai-safety-tip", 20), async (req, res) => {
   const { category, status, lang = "pt" } = req.body;
   try {
     if (!category) {
@@ -345,7 +389,7 @@ app.post("/api/safety-tip", async (req, res) => {
 });
 
 // API endpoint para Validação Inteligente da Descrição com IA (verifica marcas, números de série, detalhes únicos)
-app.post("/api/validate-description", async (req, res) => {
+app.post("/api/validate-description", enforceRateLimit("ai-validate-description", 20), async (req, res) => {
   try {
     const { title, description, category, status } = req.body;
     const descText = (description || "").trim();
@@ -475,7 +519,7 @@ Critérios de Avaliação:
 });
 
 // API endpoint para Sugestão Automática de Categoria com base no Título e Descrição
-app.post("/api/suggest-category", async (req, res) => {
+app.post("/api/suggest-category", enforceRateLimit("ai-suggest-category", 20), async (req, res) => {
   try {
     const { title = "", description = "" } = req.body;
     const validCategories = [
@@ -573,7 +617,7 @@ function serverFallbackCategory(title: string, description: string): string {
 }
 
 // API endpoint to suggest nearby landmarks using Google Search grounding based on lat/lng coordinates
-app.post("/api/suggest-landmarks", async (req, res) => {
+app.post("/api/suggest-landmarks", enforceRateLimit("ai-suggest-landmarks", 20), async (req, res) => {
   try {
     const { latitude, longitude } = req.body;
     if (!latitude || !longitude) {
@@ -631,7 +675,7 @@ Por favor, use a ferramenta de pesquisa do Google (Google Search) para garantir 
 });
 
 // API endpoint for automated ID verification (BI/License/Passport) using Gemini OCR & validation
-app.post("/api/verify-document", async (req, res) => {
+app.post("/api/verify-document", enforceRateLimit("ai-verify-document", 20), async (req, res) => {
   try {
     const { imageBase64, imagesBase64 } = req.body;
     if (!imageBase64 && (!imagesBase64 || imagesBase64.length === 0)) {
@@ -722,7 +766,7 @@ Retorne a resposta estritamente conforme o JSON esquema fornecido.`;
 });
 
 // API endpoint for extracting lost/found document data (BI/Passport) using Gemini OCR
-app.post("/api/extract-document-data", async (req, res) => {
+app.post("/api/extract-document-data", enforceRateLimit("ai-extract-document-data", 20), async (req, res) => {
   try {
     const { imageBase64 } = req.body;
     if (!imageBase64) {
@@ -834,7 +878,7 @@ function calculateCosineSimilarity(vecA: number[], vecB: number[]): number {
 }
 
 // API endpoint para Pesquisa Semântica com embeddings gerados pela IA (gemini-embedding-2-preview)
-app.post("/api/semantic-search", async (req, res) => {
+app.post("/api/semantic-search", enforceRateLimit("ai-semantic-search", 20), async (req, res) => {
   try {
     const { searchQuery } = req.body;
     if (!searchQuery || !searchQuery.trim()) {
@@ -918,7 +962,7 @@ app.post("/api/semantic-search", async (req, res) => {
 });
 
 // API Endpoint for matching lost and found items using Gemini (securely server-side proxy)
-app.post("/api/analyze-match", async (req, res) => {
+app.post("/api/analyze-match", enforceRateLimit("ai-analyze-match", 20), async (req, res) => {
   const { lostItem, foundItem } = req.body;
   try {
     if (!lostItem || !foundItem) {
@@ -968,7 +1012,7 @@ app.post("/api/analyze-match", async (req, res) => {
 });
 
 // API Endpoint for generating search tags using Gemini (securely server-side proxy)
-app.post("/api/generate-tags", async (req, res) => {
+app.post("/api/generate-tags", enforceRateLimit("ai-generate-tags", 20), async (req, res) => {
   const { description } = req.body;
   try {
     if (!description) {
@@ -999,7 +1043,7 @@ app.post("/api/generate-tags", async (req, res) => {
 });
 
 // API Endpoint para Sugestões Inteligentes no Feed com Gemini
-app.post("/api/smart-suggestions", async (req, res) => {
+app.post("/api/smart-suggestions", enforceRateLimit("ai-smart-suggestions", 20), async (req, res) => {
   try {
     const { recentSearches, candidateItems, userCoords, userProvince } = req.body;
     
