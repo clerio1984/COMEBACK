@@ -93,7 +93,7 @@ export const requestAndSaveFcmToken = async (userId: string, customVapidKey?: st
       if ('serviceWorker' in navigator) {
         try {
           const reg = swReg || await navigator.serviceWorker.ready;
-          const publicVapidKey = "BJnjmch1cQH0iUX35auZ1_Dby0M_v-xos1K_dV7WMuHTDMV-iG5VsJZXjJ92mJPlC89aw5npJQCcC3H9_uVON_I";
+          const publicVapidKey = DEFAULT_FCM_VAPID_KEY;
           const convertedVapidKey = urlBase64ToUint8Array(publicVapidKey);
           
           let sub = await reg.pushManager.getSubscription();
