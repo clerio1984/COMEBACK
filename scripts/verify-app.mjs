@@ -13,6 +13,8 @@ const forbidden = [
   ['hardcoded admin password', /FireW@ll321/i],
   ['old VAPID private key fallback', /VAPID_PRIVATE_KEY\s*\|\|/],
   ['public Firestore allow-all rule', /allow\s+read,\s*write:\s*if\s+true\s*;/],
+  ['anonymous report identity', /reporterId:\s*currentUser\?\.id\s*\|\|\s*['"]anonymous['"]/],
+  ['admin localStorage mode', /comeback_isAdminMode/],
 ];
 
 let failed = false;
