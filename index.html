@@ -3,7 +3,10 @@
 <html lang="pt-MZ">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0f224a">
+    <meta name="description" content="ComeBack Moçambique — plataforma para encontrar e devolver objetos, documentos e animais perdidos ou achados.">
+    <meta name="format-detection" content="telephone=no">
     <title>ComeBack Moçambique - Radar de Perdidos e Achados</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -212,6 +215,16 @@
         0% { left: -100%; }
         25% { left: 160%; }
         100% { left: 160%; }
+    }
+
+    /* Accessibility: respect reduced-motion preferences. */
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            scroll-behavior: auto !important;
+            transition-duration: 0.01ms !important;
+        }
     }
 
     /* Proximity Alert Toast Grid Layout & Responsive Media Query */
