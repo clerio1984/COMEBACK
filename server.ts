@@ -25,7 +25,11 @@ function getServerDb() {
   return getAdminFirestore(adminApp);
 }
 
-const db = getServerDb();
+let serverDb: ReturnType<typeof getAdminFirestore> | null = null;
+function getServerDbCached() {
+  if (!serverDb) serverDb = getServerDb();
+  return serverDb;
+}
 
 // Inicializar Chaves VAPID estáveis para o Web Push
 const vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
@@ -1089,7 +1093,7 @@ app.post("/api/trigger-push", async (req, res) => {
     }
 
     // 1. Ir buscar as subscrições Web Push do utilizador no Firestore
-    const userDocRef = db.collection("users").doc(userId);
+    const userDocRef = getServerDbCached().collection("users").doc(userId);
     const userDocSnap = await userDocRef.get();
     if (!userDocSnap.exists()) {
       return res.status(404).json({ error: "Utilizador não encontrado no sistema." });
@@ -1187,7 +1191,7 @@ app.post("/api/trigger-sms", async (req, res) => {
     let webhookError = "";
 
     try {
-      const configDocRef = db.collection("settings").doc("sms_config");
+      const configDocRef = getServerDbCached().collection("settings").doc("sms_config");
       const configDocSnap = await configDocRef.get();
       if (configDocSnap.exists()) {
         const configData = configDocSnap.data();
