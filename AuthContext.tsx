@@ -17,7 +17,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const ADMIN_EMAILS = new Set(['clerio1984@gmail.com', 'admin@achei.mz', 'admin@comeback.co.mz']);
-const isAdminEmail = (email?: string | null) => !!email && ADMIN_EMAILS.has(email.trim().toLowerCase());
+const isAdminEmail = (user?: FirebaseUser | null) => !!user?.email && user.emailVerified && ADMIN_EMAILS.has(user.email.trim().toLowerCase());
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -32,7 +32,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (!user) { setCurrentUser(null); setLoading(false); return; }
       const userDocRef = doc(db, 'users', user.uid);
       unsubscribeUser = onSnapshot(userDocRef, async (docSnap) => {
-        const emailIsAdmin = isAdminEmail(user.email);
+        const emailIsAdmin = isAdminEmail(user);
         if (docSnap.exists()) {
           const userData = docSnap.data() as User;
           const normalizedUser: User = { ...userData, id: user.uid, email: userData.email || user.email || '', isAdmin: emailIsAdmin || userData.isAdmin === true, isSuperAdmin: emailIsAdmin || userData.isSuperAdmin === true };
@@ -62,8 +62,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const adminLogin = async (name: string, pass: string) => {
     const normalized = name.trim().toLowerCase();
     const email = (normalized === 'admin' || normalized === 'admin comeback' || normalized === 'admin achei') ? 'admin@comeback.co.mz' : normalized;
-    if (!isAdminEmail(email)) throw new Error('Conta de administrador não autorizada.');
-    await signInWithEmailAndPassword(auth, email, pass);
+    if (!ADMIN_EMAILS.has(email)) throw new Error('Conta de administrador não autorizada.');
+    const result = await signInWithEmailAndPassword(auth, email, pass);
+    if (!result.user.emailVerified) {
+      await signOut(auth);
+      throw new Error('O e-mail do administrador precisa estar verificado.');
+    }
   };
   const logout = async () => { setCurrentUser(null); setFirebaseUser(null); await signOut(auth); };
   const updateUserProfile = async (data: Partial<User>) => {
