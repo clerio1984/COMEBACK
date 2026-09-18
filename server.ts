@@ -1003,6 +1003,10 @@ app.post("/api/smart-suggestions", async (req, res) => {
 // API Endpoint para despachar notificações push reais via Service Workers (Web Push)
 app.post("/api/trigger-push", async (req, res) => {
   try {
+    if (!vapidConfigured) {
+      return res.status(503).json({ error: "Web Push não está configurado no servidor." });
+    }
+
     const { userId, title, body, data } = req.body;
     if (!userId) {
       return res.status(400).json({ error: "O campo userId é obrigatório." });
