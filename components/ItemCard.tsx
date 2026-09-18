@@ -11,19 +11,6 @@ interface ItemCardProps {
   distanceText?: string;
 }
 
-const CATEGORY_ICONS: Record<string, string> = {
-  [Category.DOCUMENTS]: 'fa-id-card',
-  [Category.KEYS]: 'fa-key',
-  [Category.PETS]: 'fa-paw',
-  [Category.ELECTRONICS]: 'fa-mobile-screen-button',
-  [Category.WALLETS]: 'fa-wallet',
-  [Category.BAGS]: 'fa-bag-shopping',
-  [Category.CLOTHING]: 'fa-shirt',
-  [Category.JEWELRY]: 'fa-gem',
-  [Category.PEOPLE]: 'fa-person-circle-exclamation',
-  [Category.OTHERS]: 'fa-box',
-};
-
 const ItemCard: React.FC<ItemCardProps> = React.memo(({ 
   item, 
   onViewDetails, 
@@ -66,8 +53,17 @@ const ItemCard: React.FC<ItemCardProps> = React.memo(({
   if (variant === 'list') {
     return (
       <div
+        role="button"
+        tabIndex={0}
+        aria-label={`Ver detalhes: ${item.title}`}
         onClick={() => onViewDetails(item)}
-        className="bg-white rounded-2xl p-3 shadow-xs hover:shadow-md transition-all duration-200 border border-gray-150 flex items-center gap-3.5 cursor-pointer active:scale-[0.99]"
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onViewDetails(item);
+          }
+        }}
+        className="bg-white rounded-2xl p-3 shadow-xs hover:shadow-md transition-all duration-200 border border-gray-150 flex items-center gap-3.5 cursor-pointer active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#008fe2] focus-visible:ring-offset-2"
         id={`item-card-list-${item.id}`}
       >
         {/* Left Thumbnail */}
@@ -114,7 +110,16 @@ const ItemCard: React.FC<ItemCardProps> = React.memo(({
 
   // Grid Card Layout (Screenshot 2 - Discover Nearby Ads!)
   return (
-    <div 
+    <div
+      role="button"
+      tabIndex={0}
+      aria-label={`Ver detalhes: ${item.title}`}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onViewDetails(item);
+        }
+      }}
       className={`item-card bg-white rounded-2xl shadow-xs overflow-hidden transition-all duration-200 flex flex-col justify-between border border-gray-150 hover:shadow-md hover:border-gray-300 active:scale-[0.99] cursor-pointer ${
         isReunited ? 'opacity-90' : ''
       }`}
