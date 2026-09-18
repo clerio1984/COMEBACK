@@ -83,6 +83,10 @@ const ChatView: React.FC<ChatViewProps> = ({
   const [isReported, setIsReported] = useState(false);
 
   const handleReportChatDanger = async () => {
+    if (!currentUser) {
+      alert("Inicie sessão para enviar um relatório de segurança.");
+      return;
+    }
     if (isReported) return;
     try {
       const reportId = 'safety_report_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
@@ -90,8 +94,8 @@ const ChatView: React.FC<ChatViewProps> = ({
         id: reportId,
         itemId: item.id,
         itemTitle: item.title,
-        reporterId: currentUser?.id || 'anonymous',
-        reporterName: currentUser?.name || 'Anónimo',
+        reporterId: currentUser.id,
+        reporterName: currentUser.name || 'Utilizador',
         reportedTerms: chatSafetyStatus.detectedTerms,
         reportedMessagesCount: analyzedMessages.filter(m => m.safety.hasDanger).length,
         timestamp: new Date().toISOString()
