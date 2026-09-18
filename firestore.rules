@@ -3,6 +3,13 @@ service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() { return request.auth != null; }
     function systemAdmin() {
+      return signedIn() && request.auth.token.email_verified == true && (
+        request.auth.token.email == 'clerio1984@gmail.com' ||
+        request.auth.token.email == 'admin@achei.mz' ||
+        request.auth.token.email == 'admin@comeback.co.mz'
+      );
+    }
+    function reservedAdminEmail() {
       return signedIn() && (
         request.auth.token.email == 'clerio1984@gmail.com' ||
         request.auth.token.email == 'admin@achei.mz' ||
@@ -12,9 +19,9 @@ service cloud.firestore {
 
     match /users/{userId} {
       allow read: if signedIn() && (request.auth.uid == userId || systemAdmin());
-      allow create: if signedIn() && request.auth.uid == userId
+      allow create: if systemAdmin() || (signedIn() && !reservedAdminEmail() && request.auth.uid == userId
         && request.resource.data.get('isAdmin', false) == false
-        && request.resource.data.get('isSuperAdmin', false) == false;
+        && request.resource.data.get('isSuperAdmin', false) == false);
       allow update: if systemAdmin() || (
         signedIn() && request.auth.uid == userId
         && request.resource.data.get('isAdmin', false) == resource.data.get('isAdmin', false)
