@@ -1,5 +1,6 @@
 
 import React, { useState, useMemo, useEffect, useRef, Suspense, lazy } from 'react';
+import { authenticatedFetch } from './services/firebase';
 import Layout from './components/Layout';
 import ItemCard from './components/ItemCard';
 import NotificationDrawer from './components/NotificationDrawer';
@@ -1539,7 +1540,7 @@ const AppContent: React.FC = () => {
     const delayDebounceFn = setTimeout(async () => {
       setIsSearchingSemantically(true);
       try {
-        const response = await fetch('/api/semantic-search', {
+        const response = await authenticatedFetch('/api/semantic-search', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1599,7 +1600,7 @@ const AppContent: React.FC = () => {
     }
 
     try {
-      const response = await fetch("/api/suggest-improvements", {
+      const response = await authenticatedFetch("/api/suggest-improvements", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1654,7 +1655,7 @@ const AppContent: React.FC = () => {
           // Compress image to stayed under Firestore 1MB limit
           const compressedBase64 = await compressImage(base64, 1000, 1000, 0.7);
 
-          const response = await fetch("/api/extract-document-data", {
+          const response = await authenticatedFetch("/api/extract-document-data", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -2121,7 +2122,7 @@ const AppContent: React.FC = () => {
       }
       
       // Enviar notificação push nativa por Service Worker no background do dispositivo
-      fetch('/api/trigger-push', {
+      authenticatedFetch('/api/trigger-push', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -2138,7 +2139,7 @@ const AppContent: React.FC = () => {
 
       // Se for um MATCH de item alto valor, despachar notificação automática por SMS
       if (fullNotif.type === 'MATCH' && isHighValueMatch) {
-        fetch('/api/trigger-sms', {
+        authenticatedFetch('/api/trigger-sms', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -4299,7 +4300,7 @@ const AppContent: React.FC = () => {
                                         const compressedBase64 = await compressImage(base64, 1000, 1000, 0.7);
 
                                         // Automated validation check with server-side AI OCR
-                                        const verifyRes = await fetch("/api/verify-document", {
+                                        const verifyRes = await authenticatedFetch("/api/verify-document", {
                                           method: "POST",
                                           headers: {
                                             "Content-Type": "application/json",
