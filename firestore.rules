@@ -1,64 +1,83 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Helper Functions
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isSystemAdmin() {
-      return isSignedIn() && (
+    function signedIn() { return request.auth != null; }
+    function systemAdmin() {
+      return signedIn() && (
         request.auth.token.email == 'clerio1984@gmail.com' ||
         request.auth.token.email == 'admin@achei.mz' ||
         request.auth.token.email == 'admin@comeback.co.mz'
       );
     }
 
-    // Collection Rules
     match /users/{userId} {
-      allow read, write: if true;
+      allow read: if signedIn() && (request.auth.uid == userId || systemAdmin());
+      allow create: if signedIn() && request.auth.uid == userId
+        && request.resource.data.get('isAdmin', false) == false
+        && request.resource.data.get('isSuperAdmin', false) == false;
+      allow update: if systemAdmin() || (
+        signedIn() && request.auth.uid == userId
+        && request.resource.data.get('isAdmin', false) == resource.data.get('isAdmin', false)
+        && request.resource.data.get('isSuperAdmin', false) == resource.data.get('isSuperAdmin', false)
+      );
+      allow delete: if systemAdmin();
     }
 
     match /items/{itemId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if systemAdmin() || (signedIn() && resource.data.userId == request.auth.uid && request.resource.data.userId == resource.data.userId);
+      allow delete: if systemAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
     }
 
     match /messages/{messageId} {
-      allow read, write: if true;
+      allow read: if signedIn() && (resource.data.senderId == request.auth.uid || resource.data.receiverId == request.auth.uid || systemAdmin());
+      allow create: if signedIn() && request.resource.data.senderId == request.auth.uid;
+      allow update: if systemAdmin() || (signedIn() && (resource.data.senderId == request.auth.uid || resource.data.receiverId == request.auth.uid) && request.resource.data.senderId == resource.data.senderId && request.resource.data.receiverId == resource.data.receiverId && request.resource.data.itemId == resource.data.itemId);
+      allow delete: if systemAdmin() || (signedIn() && resource.data.senderId == request.auth.uid);
     }
 
     match /notifications/{notifId} {
-      allow read, write: if true;
+      allow read: if signedIn() && (resource.data.userId == request.auth.uid || systemAdmin());
+      allow create: if systemAdmin() || (signedIn() && request.resource.data.userId == request.auth.uid);
+      allow update, delete: if systemAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
     }
 
     match /comments/{commentId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if systemAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
     }
 
     match /dangerReports/{reportId} {
-      allow read, write: if true;
+      allow read: if systemAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if systemAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
     }
 
     match /reports/{reportId} {
-      allow read, write: if true;
+      allow read: if systemAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if systemAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
     }
 
     match /settings/{settingId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if systemAdmin();
     }
 
     match /reviews/{reviewId} {
-      allow read, write: if true;
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.reviewerId == request.auth.uid;
+      allow update, delete: if systemAdmin() || (signedIn() && resource.data.reviewerId == request.auth.uid);
     }
 
     match /insured_phones/{phoneId} {
-      allow read, write: if true;
+      allow read: if systemAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if systemAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
     }
 
-    // Default safety deny net for other collections
-    match /{document=**} {
-      allow read, write: if false;
-    }
+    match /{document=**} { allow read, write: if false; }
   }
 }
