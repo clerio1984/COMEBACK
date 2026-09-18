@@ -2147,7 +2147,8 @@ const AppContent: React.FC = () => {
           body: JSON.stringify({
             userId: finalUserId,
             title: fullNotif.title,
-            body: fullNotif.description
+            body: fullNotif.description,
+          itemId: fullNotif.itemId || undefined
           })
         }).catch(err => console.warn("Erro ao despachar SMS Notification:", err));
       }
