@@ -163,14 +163,21 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
 }
 
 
-export async function authenticatedFetch(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> {
-  const user = auth.currentUser;
-  if (!user) throw new Error('É necessário iniciar sessão.');
-  const token = await user.getIdToken();
+export async function apiFetch(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> {
   const headers = new Headers(init.headers);
-  headers.set('Authorization', `Bearer ${token}`);
+  const user = auth.currentUser;
+  if (user) {
+    const token = await user.getIdToken();
+    headers.set('Authorization', `Bearer ${token}`);
+  }
   if (!headers.has('Content-Type') && init.body && !(init.body instanceof FormData)) {
     headers.set('Content-Type', 'application/json');
   }
   return fetch(input, { ...init, headers });
+}
+
+export async function authenticatedFetch(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> {
+  const user = auth.currentUser;
+  if (!user) throw new Error('É necessário iniciar sessão.');
+  return apiFetch(input, init);
 }
