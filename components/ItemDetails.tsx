@@ -860,6 +860,10 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item: initialItem, allContext
 
   const handleSendReport = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!currentUser) {
+      alert("Inicie sessão para enviar uma denúncia.");
+      return;
+    }
     if (!reportReason) {
       alert("Por favor, selecione um motivo.");
       return;
@@ -870,8 +874,8 @@ const ItemDetails: React.FC<ItemDetailsProps> = ({ item: initialItem, allContext
       await addDoc(collection(db, 'reports'), {
         itemId: item.id,
         itemTitle: item.title,
-        reporterId: currentUser?.id || 'anonymous',
-        reporterEmail: currentUser?.email || 'anonymous',
+        reporterId: currentUser.id,
+        reporterEmail: currentUser.email || '',
         reason: reportReason,
         details: reportDetails,
         status: 'pending',
