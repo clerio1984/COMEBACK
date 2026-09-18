@@ -68,8 +68,7 @@ service cloud.firestore {
 
     match /reports/{reportId} {
       allow read: if systemAdmin();
-      allow create: if request.resource.data.reporterId == 'anonymous'
-        || (signedIn() && request.resource.data.reporterId == request.auth.uid);
+      allow create: if signedIn() && request.resource.data.reporterId == request.auth.uid;
       allow update, delete: if systemAdmin()
         || (signedIn() && resource.data.reporterId == request.auth.uid);
     }
