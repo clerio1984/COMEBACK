@@ -60,33 +60,6 @@ const Layout: React.FC<LayoutProps> = ({
 
   const effectiveIsOnline = isOnline && browserOnline;
 
-  const [onlineCount, setOnlineCount] = useState<number>(() => {
-    const hour = new Date().getHours();
-    let base = 124;
-    if (hour >= 23 || hour < 6) {
-      base = 42 + Math.floor(Math.random() * 20);
-    } else if (hour >= 8 && hour <= 19) {
-      base = 156 + Math.floor(Math.random() * 50);
-    } else {
-      base = 98 + Math.floor(Math.random() * 30);
-    }
-    return base;
-  });
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setOnlineCount(prev => {
-        const change = Math.random() > 0.45 ? 1 : -1;
-        const delta = Math.floor(Math.random() * 3) * change;
-        const next = prev + delta;
-        return Math.max(35, Math.min(265, next));
-      });
-    }, 6000);
-    return () => clearInterval(timer);
-  }, []);
-
-
-
   useEffect(() => {
     if (isOnline && !prevOnline) {
       setShowReconnect(true);
@@ -136,13 +109,15 @@ const Layout: React.FC<LayoutProps> = ({
             <button 
               onClick={() => setIsMenuOpen(true)}
               className="text-white hover:bg-white/15 active:scale-95 transition-all p-2 rounded-xl flex items-center justify-center cursor-pointer h-10 w-10"
-              title="Menu"
+              title="Abrir menu"
+              aria-label="Abrir menu principal"
+              aria-expanded={isMenuOpen}
               id="hamburger-menu-btn"
             >
               <i className="fa-solid fa-bars text-xl"></i>
             </button>
 
-            <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => setActiveTab('feed')}>
+            <button type="button" aria-label="Ir para o radar ComeBack" className="flex items-center gap-2.5 cursor-pointer bg-transparent border-0 p-0 text-left" onClick={() => setActiveTab('feed')}>
               <div className="bg-white rounded-xl h-9 w-9 flex items-center justify-center shadow-sm overflow-hidden shrink-0 p-0.5 border border-white/20">
                 <img src={logoUrl} alt="ComeBack" className="w-full h-full object-cover rounded-lg" />
               </div>
@@ -151,7 +126,7 @@ const Layout: React.FC<LayoutProps> = ({
                 <span className="text-[10px] font-bold text-sky-200 uppercase tracking-widest leading-none block mt-0.5">Perdidos e Achados</span>
               </div>
             </div>
-          </div>
+          </button>
           
           <div className="flex gap-2 items-center relative z-10">
             {/* Indicador Visual Claro de Dispositivo Offline na Barra de Navegação */}
@@ -202,6 +177,7 @@ const Layout: React.FC<LayoutProps> = ({
               onClick={onToggleNotifications}
               className="text-white hover:bg-white/15 active:scale-95 transition-all p-2 rounded-xl flex items-center justify-center h-10 w-10 cursor-pointer relative"
               title="Notificações"
+              aria-label={`Notificações${notificationCount > 0 ? `, ${notificationCount} não lidas` : ""}`}
             >
               <i className="fa-solid fa-bell text-lg"></i>
               {notificationCount > 0 && (
@@ -217,6 +193,7 @@ const Layout: React.FC<LayoutProps> = ({
                   onClick={() => setActiveTab('profile')}
                   className="w-9 h-9 rounded-full border-2 border-white/60 overflow-hidden bg-white shadow-sm hover:scale-105 active:scale-95 transition-transform cursor-pointer"
                   title="Ver Perfil"
+                  aria-label="Abrir perfil"
                 >
                   <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser.id}`} alt="User" />
                 </button>
@@ -225,6 +202,7 @@ const Layout: React.FC<LayoutProps> = ({
                     onClick={onLogout}
                     className="text-white/80 hover:text-white hover:bg-white/15 p-2 rounded-xl transition-all active:scale-95 cursor-pointer h-9 w-9 flex items-center justify-center"
                     title="Terminar Sessão (Sair)"
+                    aria-label="Terminar sessão"
                     id="header-logout-btn"
                   >
                     <i className="fa-solid fa-arrow-right-from-bracket text-sm"></i>
@@ -278,6 +256,7 @@ const Layout: React.FC<LayoutProps> = ({
                 onClick={() => setIsMenuOpen(false)}
                 className="text-white hover:text-sky-300 hover:scale-110 active:scale-95 transition-all p-1.5 bg-white/10 rounded-lg"
                 title="Fechar Menu"
+                aria-label="Fechar menu principal"
               >
                 <i className="fa-solid fa-xmark text-base"></i>
               </button>
@@ -689,6 +668,7 @@ const Layout: React.FC<LayoutProps> = ({
                     onClick={() => setShowOfflineModal(false)}
                     className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 cursor-pointer"
                     title="Fechar"
+                    aria-label="Fechar aviso de modo offline"
                   >
                     <i className="fa-solid fa-xmark text-lg"></i>
                   </button>
