@@ -35,9 +35,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const emailIsAdmin = isAdminEmail(user);
         if (docSnap.exists()) {
           const userData = docSnap.data() as User;
-          const normalizedUser: User = { ...userData, id: user.uid, email: userData.email || user.email || '', isAdmin: emailIsAdmin || userData.isAdmin === true, isSuperAdmin: emailIsAdmin || userData.isSuperAdmin === true };
+          const normalizedUser: User = { ...userData, id: user.uid, email: userData.email || user.email || '', isAdmin: emailIsAdmin, isSuperAdmin: emailIsAdmin };
           setCurrentUser(normalizedUser); setLoading(false);
-          if (emailIsAdmin && (!userData.isAdmin || !userData.isSuperAdmin)) setDoc(userDocRef, { isAdmin: true, isSuperAdmin: true }, { merge: true }).catch((error) => console.warn('Could not sync admin profile flags:', error));
           return;
         }
         const fallbackUser: User = { id: user.uid, name: user.displayName || 'Utilizador', email: user.email || '', phone: '', isVerified: false, isAdmin: emailIsAdmin, isSuperAdmin: emailIsAdmin, createdAt: new Date().toISOString() };
