@@ -4,15 +4,28 @@ import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import webpush from "web-push";
 import { initializeApp } from "firebase/app";
-import { getFirestore, initializeFirestore, doc, getDoc, updateDoc, collection, getDocs } from "firebase/firestore";
+import { getApps as getAdminApps, initializeApp as initializeAdminApp, cert } from "firebase-admin/app";
+import { getFirestore as getAdminFirestore } from "firebase-admin/firestore";
 import fs from "fs";
 
 // Sincronizar leitura de configurações do Firebase
 const firebaseConfig = JSON.parse(fs.readFileSync(path.resolve("./firebase-applet-config.json"), "utf8"));
 const firebaseApp = initializeApp(firebaseConfig);
-const db = firebaseConfig.firestoreDatabaseId
-  ? initializeFirestore(firebaseApp, {}, firebaseConfig.firestoreDatabaseId)
-  : getFirestore(firebaseApp);
+
+function getServerDb() {
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+  const projectId = process.env.FIREBASE_PROJECT_ID || firebaseConfig.projectId;
+  if (!privateKey || !clientEmail || !projectId) {
+    throw new Error("Firebase Admin não configurado no servidor.");
+  }
+  const adminApp = getAdminApps().length
+    ? getAdminApps()[0]
+    : initializeAdminApp({ credential: cert({ projectId, clientEmail, privateKey }) });
+  return getAdminFirestore(adminApp);
+}
+
+const db = getServerDb();
 
 // Inicializar Chaves VAPID estáveis para o Web Push
 const vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
@@ -1072,8 +1085,8 @@ app.post("/api/trigger-push", async (req, res) => {
     }
 
     // 1. Ir buscar as subscrições Web Push do utilizador no Firestore
-    const userDocRef = doc(db, "users", userId);
-    const userDocSnap = await getDoc(userDocRef);
+    const userDocRef = db.collection("users").doc(userId);
+    const userDocSnap = await userDocRef.get();
     if (!userDocSnap.exists()) {
       return res.status(404).json({ error: "Utilizador não encontrado no sistema." });
     }
@@ -1118,9 +1131,7 @@ app.post("/api/trigger-push", async (req, res) => {
     // 4. Se houver assinaturas expiradas, filtre e remova-as
     if (indicesToRemove.length > 0) {
       const filteredSubscriptions = subscriptions.filter((_: any, idx: number) => !indicesToRemove.includes(idx));
-      await updateDoc(userDocRef, {
-        webPushSubscriptions: filteredSubscriptions
-      });
+      await userDocRef.update({ webPushSubscriptions: filteredSubscriptions });
       console.log(`[Push Server] Limpadas ${indicesToRemove.length} subscrições expiradas ou inválidas para o utilizador ${userId}.`);
     }
 
@@ -1172,8 +1183,8 @@ app.post("/api/trigger-sms", async (req, res) => {
     let webhookError = "";
 
     try {
-      const configDocRef = doc(db, "settings", "sms_config");
-      const configDocSnap = await getDoc(configDocRef);
+      const configDocRef = db.collection("settings").doc("sms_config");
+      const configDocSnap = await configDocRef.get();
       if (configDocSnap.exists()) {
         const configData = configDocSnap.data();
         if (configData.isActive && configData.webhookUrl) {
