@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { authenticatedFetch } from '../services/firebase';
 import { collection, query, onSnapshot, doc, updateDoc, getDocs, getCountFromServer, setDoc } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../services/firebase';
 import { User, Item, ItemStatus, Category, SmsGatewayConfig } from '../types';
@@ -226,7 +227,7 @@ export const AdminDashboard: React.FC = () => {
     setTestingSms(true);
     setTestResult(null);
     try {
-      const response = await fetch('/api/test-sms-webhook', {
+      const response = await authenticatedFetch('/api/test-sms-webhook', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
