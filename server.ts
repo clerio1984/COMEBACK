@@ -1083,6 +1083,10 @@ app.post("/api/trigger-push", async (req, res) => {
     if (!userId) {
       return res.status(400).json({ error: "O campo userId é obrigatório." });
     }
+    const callerEmail = caller.email?.trim().toLowerCase();
+    if (caller.uid !== userId && (!callerEmail || !ADMIN_EMAILS.has(callerEmail))) {
+      return res.status(403).json({ error: "Não autorizado a enviar esta notificação." });
+    }
 
     // 1. Ir buscar as subscrições Web Push do utilizador no Firestore
     const userDocRef = db.collection("users").doc(userId);
