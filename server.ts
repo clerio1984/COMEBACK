@@ -138,6 +138,15 @@ function validateTextField(value: unknown, field: string, maxLength: number): st
   return null;
 }
 
+async function canNotifyTarget(caller: import("firebase-admin/auth").DecodedIdToken, userId: string, itemId?: string): Promise<boolean> {
+  const callerEmail = caller.email?.trim().toLowerCase();
+  if (caller.email_verified && callerEmail && ADMIN_EMAILS.has(callerEmail)) return true;
+  if (caller.uid === userId) return true;
+  if (!itemId) return false;
+  const itemSnap = await getServerDbCached().collection("items").doc(itemId).get();
+  return itemSnap.exists && itemSnap.data()?.userId === caller.uid;
+}
+
 async function isUnsafeHost(hostname: string): Promise<boolean> {
   const host = hostname.trim().toLowerCase();
   if (host === "localhost" || host.endsWith(".localhost") || host === "0.0.0.0" || host === "::1" || host.endsWith(".local")) return true;
@@ -1129,8 +1138,9 @@ app.post("/api/smart-suggestions", enforceRateLimit("ai-smart-suggestions", 20),
 });
 
 // API Endpoint para despachar notificações push reais via Service Workers (Web Push)
-app.post("/api/trigger-push", async (req, res) => {
-  if (!(await requireAdmin(req, res))) return;
+app.post("/api/trigger-push", enforceRateLimit("trigger-push", 10), async (req, res) => {
+  const caller = await requireAuthenticatedUser(req, res);
+  if (!caller) return;
   try {
     if (!vapidConfigured) {
       return res.status(503).json({ error: "Web Push não está configurado no servidor." });
@@ -1140,10 +1150,8 @@ app.post("/api/trigger-push", async (req, res) => {
     if (!userId) {
       return res.status(400).json({ error: "O campo userId é obrigatório." });
     }
-    const callerEmail = caller.email?.trim().toLowerCase();
-    if (caller.uid !== userId && (!callerEmail || !ADMIN_EMAILS.has(callerEmail))) {
-      return res.status(403).json({ error: "Não autorizado a enviar esta notificação." });
-    }
+    const authorized = await canNotifyTarget(caller, userId, typeof data?.itemId === "string" ? data.itemId : undefined);
+    if (!authorized) return res.status(403).json({ error: "Não autorizado a enviar esta notificação." });
 
     // 1. Ir buscar as subscrições Web Push do utilizador no Firestore
     const userDocRef = getServerDbCached().collection("users").doc(userId);
@@ -1208,13 +1216,17 @@ app.post("/api/trigger-push", async (req, res) => {
 });
 
 // API Endpoint to simulate/trigger SMS notification for high-value items
-app.post("/api/trigger-sms", async (req, res) => {
-  if (!(await requireAdmin(req, res))) return;
+app.post("/api/trigger-sms", enforceRateLimit("trigger-sms", 5), async (req, res) => {
+  const caller = await requireAuthenticatedUser(req, res);
+  if (!caller) return;
   try {
-    const { userId, title, body } = req.body;
+    const { userId, title, body, itemId } = req.body;
     if (!userId) {
       return res.status(400).json({ error: "O campo userId é obrigatório." });
     }
+
+    const smsAuthorized = await canNotifyTarget(caller, userId, typeof itemId === "string" ? itemId : undefined);
+    if (!smsAuthorized) return res.status(403).json({ error: "Não autorizado a enviar este SMS." });
 
     const userDocRef = getServerDbCached().collection("users").doc(userId);
     const userDocSnap = await userDocRef.get();
