@@ -38,7 +38,6 @@ const ComeBackArchitectureHub = lazy(() => import('./components/ComeBackArchitec
 const InfoDocsView = lazy(() => import('./components/InfoDocsView').then(m => ({ default: m.InfoDocsView })));
 const WelcomeTutorial = lazy(() => import('./components/WelcomeTutorial'));
 const AppTourGuide = lazy(() => import('./components/AppTourGuide').then(m => ({ default: m.AppTourGuide })));
-const StolenItemChecker = lazy(() => import('./components/StolenItemChecker').then(m => ({ default: m.StolenItemChecker })));
 
 // Smooth, non-disruptive modern micro-loader fallback for suspended views
 const LazyLoaderFallback = () => (
@@ -95,7 +94,7 @@ const POLICE_STATIONS: PoliceStation[] = [
 const AppContent: React.FC = () => {
   const { language, t } = useLanguage();
   const { currentUser, login, logout, updateUserProfile, loading: authLoading } = useAuth();
-  const [activeTab, setActiveTab] = useState<'feed' | 'stolen-checker' | 'post' | 'profile' | 'about'>('feed');
+  const [activeTab, setActiveTab] = useState<'feed' | 'post' | 'profile' | 'about'>('feed');
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [showAIPanel, setShowAIPanel] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -1851,7 +1850,7 @@ const AppContent: React.FC = () => {
   };
 
   const [showUnsavedChangesModal, setShowUnsavedChangesModal] = useState(false);
-  const [pendingTab, setPendingTab] = useState<'feed' | 'stolen-checker' | 'post' | 'profile' | 'about' | null>(null);
+  const [pendingTab, setPendingTab] = useState<'feed' | 'post' | 'profile' | 'about' | null>(null);
 
   const hasUnsavedChanges = () => {
     return !!(
@@ -1863,12 +1862,12 @@ const AppContent: React.FC = () => {
     );
   };
 
-  const handleTabChange = (tab: 'feed' | 'stolen-checker' | 'post' | 'profile' | 'about') => {
+  const handleTabChange = (tab: 'feed' | 'post' | 'profile' | 'about') => {
     if (activeTab === 'post' && tab !== 'post' && hasUnsavedChanges()) {
       setPendingTab(tab);
       setShowUnsavedChangesModal(true);
     } else {
-      if (tab === 'feed' || tab === 'stolen-checker') {
+      if (tab === 'feed') {
         setSelectedItem(null);
         setActiveChat(null);
         setIsViewingDelivery(false);
@@ -4160,27 +4159,6 @@ const AppContent: React.FC = () => {
                   className="w-full flex-1 flex flex-col"
                 >
                   {renderFeed()}
-                </motion.div>
-              )}
-              {activeTab === 'stolen-checker' && (
-                <motion.div
-                  key="stolen-checker"
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
-                  transition={{ duration: 0.22, ease: "easeInOut" }}
-                  className="w-full h-full"
-                >
-                  <Suspense fallback={<LazyLoaderFallback />}>
-                    <StolenItemChecker
-                      items={items}
-                      onViewItem={handleViewDetails}
-                      onReportStolen={() => {
-                        setNewItem(prev => ({ ...prev, status: ItemStatus.STOLEN }));
-                        handleTabChange('post');
-                      }}
-                    />
-                  </Suspense>
                 </motion.div>
               )}
               {activeTab === 'about' && (
