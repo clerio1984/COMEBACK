@@ -2751,6 +2751,7 @@ const AppContent: React.FC = () => {
         imageUrls: []
       });
       localStorage.removeItem('comeback_publish_draft');
+      localStorage.removeItem('comeback_publish_draft');
       
       setActiveTab('feed');
       alert("📦 Artigo guardado com sucesso na fila de envio offline! Ele já está visível localmente no feed e será sincronizado com a base de dados assim que a ligação à internet for restabelecida.");
@@ -2773,6 +2774,7 @@ const AppContent: React.FC = () => {
         ownerPhone: currentUser?.phone || '',
         imageUrls: []
       });
+      localStorage.removeItem('comeback_publish_draft');
       
       setActiveTab('feed');
 
@@ -2798,6 +2800,7 @@ const AppContent: React.FC = () => {
         ownerPhone: currentUser?.phone || '',
         imageUrls: []
       });
+      localStorage.removeItem('comeback_publish_draft');
       
       setActiveTab('feed');
       alert("📦 Artigo guardado na fila offline de sincronização! Será enviado para o servidor assim que a ligação for restabelecida.");
