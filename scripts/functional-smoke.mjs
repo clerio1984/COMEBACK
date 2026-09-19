@@ -22,7 +22,7 @@ const tests = [
   ['Auth: admin access is allowlisted and verified', /ADMIN_EMAILS[\s\S]*?user\.emailVerified[\s\S]*?ADMIN_EMAILS\.has/.test(files.auth)],
   ['Auth: legacy hardcoded admin password is absent', !/FireW@ll321/i.test(files.auth)],
   ['Server: push endpoint requires authentication, not admin role', (() => { const start = files.server.indexOf('/api/trigger-push'); const end = files.server.indexOf('/api/trigger-sms'); const s = files.server.slice(start, end); return s.includes('requireAuthenticatedUser') && !s.includes('requireAdmin'); })()],
-  ['Server: SMS endpoint requires authentication, not admin role', (() => { const start = files.server.indexOf('/api/trigger-sms'); const s = files.server.slice(start); const route = s.slice(0, s.indexOf('// API Endpoint', 20) > 0 ? s.indexOf('// API Endpoint', 20) : s.length); return route.includes('requireAuthenticatedUser') && !route.includes('requireAdmin'); })()],
+  ['Server: SMS endpoint requires authentication, not admin role', (() => { const start = files.server.indexOf('/api/trigger-sms'); const end = files.server.indexOf('/api/test-sms-webhook', start); const route = files.server.slice(start, end > start ? end : start + 8000); return /const caller = await requireAuthenticatedUser\\(req, res\\)/.test(route) && !/const caller = await requireAdmin\\(req, res\\)/.test(route); })()],
   ['Server: VAPID private key comes from environment', /process\.env\.VAPID_PRIVATE_KEY/.test(files.server) && !/VAPID_PRIVATE_KEY\s*\|\|/.test(files.server)],
   ['Rules: no public allow-all write rule', !/allow\s+read,\s*write:\s*if\s+true\s*;/.test(files.rules)],
   ['Rules: cross-user notification requires sender identity', /request\.resource\.data\.senderId\s*==\s*request\.auth\.uid/.test(files.rules)],
