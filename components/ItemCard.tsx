@@ -63,7 +63,7 @@ const ItemCard: React.FC<ItemCardProps> = React.memo(({
             onViewDetails(item);
           }
         }}
-        className="bg-white rounded-2xl p-2.5 sm:p-3 shadow-[0_1px_3px_rgba(15,34,74,0.08)] hover:shadow-md transition-all duration-200 border border-slate-200/80 flex items-center gap-3 cursor-pointer active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#008fe2] focus-visible:ring-offset-2"
+        className="bg-white rounded-2xl p-2.5 sm:p-3 shadow-sm hover:shadow-sm transition-all duration-200 border border-slate-200/80 flex items-center gap-3 cursor-pointer active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#008fe2] focus-visible:ring-offset-2"
         id={`item-card-list-${item.id}`}
       >
         {/* Left Thumbnail */}
@@ -120,7 +120,7 @@ const ItemCard: React.FC<ItemCardProps> = React.memo(({
           onViewDetails(item);
         }
       }}
-      className={`item-card bg-white rounded-2xl shadow-[0_1px_3px_rgba(15,34,74,0.08)] overflow-hidden transition-all duration-200 flex flex-col justify-between border border-slate-200/80 hover:shadow-md hover:border-slate-300 active:scale-[0.99] cursor-pointer ${
+      className={`item-card bg-white rounded-2xl shadow-sm overflow-hidden transition-all duration-200 flex flex-col justify-between border border-slate-200/80 hover:shadow-sm hover:border-slate-300 active:scale-[0.99] cursor-pointer ${
         isReunited ? 'opacity-90' : ''
       }`}
       onClick={() => onViewDetails(item)}
@@ -155,7 +155,7 @@ const ItemCard: React.FC<ItemCardProps> = React.memo(({
         {/* Reunited Overlay */}
         {isReunited && (
           <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center overflow-hidden z-10 pointer-events-none">
-            <div className="bg-gradient-to-r from-[#008fe2] to-[#153268] text-white text-xs font-black tracking-widest text-center py-2 w-[150%] -rotate-12 border-y border-white/30 uppercase shadow-lg">
+            <div className="bg-gradient-to-r from-[#008fe2] to-[#153268] text-white text-xs font-black tracking-widest text-center py-2 w-[150%] -rotate-12 border-y border-white/30 uppercase shadow-sm">
               RECUPERADO
             </div>
           </div>
