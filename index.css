@@ -502,3 +502,32 @@ body:not(.high-contrast) .cluster-marker-selected > div {
     border-radius: 1rem !important;
   }
 }
+
+/* Professional surfaces and controls */
+body:not(.high-contrast) .bg-gradient-to-r,
+body:not(.high-contrast) .bg-gradient-to-l,
+body:not(.high-contrast) .bg-gradient-to-b,
+body:not(.high-contrast) .bg-gradient-to-t {
+  background-image: none !important;
+}
+body:not(.high-contrast) .backdrop-blur,
+body:not(.high-contrast) .backdrop-blur-sm,
+body:not(.high-contrast) .backdrop-blur-md,
+body:not(.high-contrast) .backdrop-blur-lg,
+body:not(.high-contrast) .backdrop-blur-xl {
+  backdrop-filter: none !important;
+}
+body:not(.high-contrast) .animate-pulse,
+body:not(.high-contrast) .animate-bounce {
+  animation-duration: 1.8s;
+}
+@media (prefers-reduced-motion: reduce) {
+  body:not(.high-contrast) *,
+  body:not(.high-contrast) *::before,
+  body:not(.high-contrast) *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
