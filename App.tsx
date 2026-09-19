@@ -1339,6 +1339,11 @@ const AppContent: React.FC = () => {
 
   const handleSendReport = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!currentUser) {
+      alert("É necessário iniciar sessão para reportar um problema.");
+      setShowReportModal(false);
+      return;
+    }
     if (!selectedItem) {
       alert("Nenhum item selecionado.");
       return;
@@ -1354,8 +1359,9 @@ const AppContent: React.FC = () => {
         id: reportId,
         itemId: selectedItem.id,
         itemTitle: selectedItem.title,
-        userId: currentUser?.id || 'anonymous',
-        userEmail: currentUser?.email || 'anonymous',
+        reporterId: currentUser.id,
+        userId: currentUser.id,
+        userEmail: currentUser.email || '',
         reason: reportReason,
         details: reportDetails,
         timestamp: new Date().toISOString()
@@ -1712,6 +1718,34 @@ const AppContent: React.FC = () => {
     ownerName: '',
     ownerPhone: ''
   });
+
+  // Rascunho local do formulário de publicação — preserva o trabalho em telemóveis e redes instáveis.
+  useEffect(() => {
+    try {
+      const savedDraft = localStorage.getItem('comeback_publish_draft');
+      if (savedDraft) {
+        const parsed = JSON.parse(savedDraft);
+        if (parsed && typeof parsed === 'object') {
+          setNewItem(prev => ({ ...prev, ...parsed }));
+        }
+      }
+    } catch (error) {
+      console.warn('Falha ao recuperar rascunho de publicação:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    const hasDraft = Boolean(
+      newItem.title?.trim() || newItem.description?.trim() || newItem.location?.trim() ||
+      newItem.reward || newItem.imageUrls?.length
+    );
+    try {
+      if (hasDraft) localStorage.setItem('comeback_publish_draft', JSON.stringify(newItem));
+      else localStorage.removeItem('comeback_publish_draft');
+    } catch (error) {
+      console.warn('Falha ao guardar rascunho de publicação:', error);
+    }
+  }, [newItem]);
 
   // Estados para Validação Inteligente da Descrição e Auto-sugestão de Categoria com Gemini
   const [isValidatingDesc, setIsValidatingDesc] = useState(false);
@@ -2716,6 +2750,7 @@ const AppContent: React.FC = () => {
         ownerPhone: currentUser?.phone || '',
         imageUrls: []
       });
+      localStorage.removeItem('comeback_publish_draft');
       
       setActiveTab('feed');
       alert("📦 Artigo guardado com sucesso na fila de envio offline! Ele já está visível localmente no feed e será sincronizado com a base de dados assim que a ligação à internet for restabelecida.");
