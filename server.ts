@@ -107,7 +107,9 @@ app.use(express.json({ limit: "8mb" }));
 app.use(express.urlencoded({ limit: "1mb", extended: true }));
 
 const publicPath = path.join(process.cwd(), "public");
-app.use(express.static(publicPath));
+if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
+  app.use(express.static(publicPath));
+}
 
 type RateEntry = { count: number; resetAt: number };
 const rateStore = new Map<string, RateEntry>();
