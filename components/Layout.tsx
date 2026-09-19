@@ -6,8 +6,8 @@ import { OfflineSyncBanner, PendingSyncCounts } from './OfflineSyncBanner';
 
 interface LayoutProps {
   children: React.ReactNode;
-  activeTab: 'feed' | 'stolen-checker' | 'post' | 'profile' | 'about';
-  setActiveTab: (tab: 'feed' | 'stolen-checker' | 'post' | 'profile' | 'about') => void;
+  activeTab: 'feed' | 'post' | 'profile' | 'about';
+  setActiveTab: (tab: 'feed' | 'post' | 'profile' | 'about') => void;
   notificationCount: number;
   onToggleNotifications: () => void;
   isOnline?: boolean;
@@ -264,22 +264,6 @@ const Layout: React.FC<LayoutProps> = ({
                   <span>{t('Publicar Registo')}</span>
                 </div>
               </button>
-
-              <button
-                onClick={() => {
-                  setActiveTab('stolen-checker');
-                  setIsMenuOpen(false);
-                }}
-                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold tracking-wide text-left transition-all ${
-                  activeTab === 'stolen-checker'
-                    ? 'bg-rose-600 text-white font-black shadow-sm'
-                    : 'hover:bg-rose-50 text-rose-700 dark:hover:bg-rose-950/30 dark:text-rose-400'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <i className="fa-solid fa-shield-halved text-base w-5 text-center text-rose-500"></i></div>
-              </button>
-
               <button
                 onClick={() => {
                   setActiveTab('profile');
