@@ -49,8 +49,13 @@ service cloud.firestore {
       allow create: if systemAdmin()
         || (signedIn() && request.resource.data.userId == request.auth.uid)
         || (signedIn()
+            && request.resource.data.senderId == request.auth.uid
+            && request.resource.data.userId != request.auth.uid
             && request.resource.data.itemId is string
-            && get(/databases/$(database)/documents/items/$(request.resource.data.itemId)).data.userId == request.auth.uid);
+            && (
+              get(/databases/$(database)/documents/items/$(request.resource.data.itemId)).data.userId == request.auth.uid
+              || get(/databases/$(database)/documents/items/$(request.resource.data.itemId)).data.userId == request.resource.data.userId
+            ));
       allow update, delete: if systemAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
     }
 
