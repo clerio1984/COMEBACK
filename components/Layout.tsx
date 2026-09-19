@@ -101,122 +101,38 @@ const Layout: React.FC<LayoutProps> = ({
     <div className="min-h-[100dvh] flex flex-col w-full bg-[#f0f3f8] text-gray-900 relative overflow-x-hidden transition-all duration-300">
 
       {/* Header com a paleta oficial da Souto Digital Serviços */}
-      <header className="sticky top-0 relative z-40 bg-gradient-to-r from-[#0f224a] via-[#153268] to-[#008fe2] text-white shadow-lg border-b border-white/10">
-        <div className="px-3 sm:px-4 py-2.5 sm:py-3 flex justify-between items-center relative min-h-[3.75rem]">
-          
-          <div className="flex items-center gap-2.5 relative z-10">
-            {/* Hamburger Button */}
-            <button 
-              onClick={() => setIsMenuOpen(true)}
-              className="text-white hover:bg-white/15 active:scale-95 transition-all p-2 rounded-xl flex items-center justify-center cursor-pointer h-10 w-10"
-              title="Abrir menu"
-              aria-label="Abrir menu principal"
-              aria-expanded={isMenuOpen}
-              id="hamburger-menu-btn"
-            >
-              <i className="fa-solid fa-bars text-xl"></i>
+      <header className="sticky top-0 z-40 bg-[var(--cb-primary)] text-white border-b border-white/10 shadow-sm">
+        <div className="px-3 sm:px-5 py-2.5 flex justify-between items-center min-h-[3.6rem]">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <button type="button" onClick={() => setIsMenuOpen(true)} className="h-10 w-10 shrink-0 rounded-xl flex items-center justify-center hover:bg-white/10 active:scale-95 transition" title="Abrir menu" aria-label="Abrir menu principal" aria-expanded={isMenuOpen} id="hamburger-menu-btn">
+              <i className="fa-solid fa-bars text-lg"></i>
             </button>
-
-            <button type="button" aria-label="Ir para o radar ComeBack" className="flex items-center gap-2.5 cursor-pointer bg-transparent border-0 p-0 text-left" onClick={() => setActiveTab('feed')}>
-              <div className="bg-white rounded-xl h-8 w-8 sm:h-9 sm:w-9 flex items-center justify-center shadow-sm overflow-hidden shrink-0 p-0.5 border border-white/20">
-                <img src={logoUrl} alt="ComeBack" className="w-full h-full object-cover rounded-lg" />
+            <button type="button" aria-label="Ir para o radar ComeBack" className="flex items-center gap-2 min-w-0 cursor-pointer bg-transparent border-0 p-0 text-left" onClick={() => setActiveTab('feed')}>
+              <div className="bg-white rounded-lg h-8 w-8 sm:h-9 sm:w-9 flex items-center justify-center overflow-hidden shrink-0 p-0.5">
+                <img src={logoUrl} alt="ComeBack" className="w-full h-full object-cover rounded-md" />
               </div>
-              <div>
-                <h1 className="text-base sm:text-lg font-black tracking-tight leading-none text-white">ComeBack</h1>
-                <span className="text-[8px] sm:text-[10px] font-bold text-sky-200 uppercase tracking-widest leading-none block mt-0.5">Perdidos e Achados</span>
+              <div className="min-w-0">
+                <h1 className="text-base sm:text-lg font-extrabold tracking-tight leading-none text-white">ComeBack</h1>
+                <span className="hidden xs:block text-[8px] sm:text-[9px] font-semibold text-white/65 uppercase tracking-widest leading-none mt-1">Perdidos e Achados</span>
               </div>
             </button>
           </div>
-          
-          <div className="flex gap-2 items-center relative z-10">
-            {/* Indicador Visual Claro de Dispositivo Offline na Barra de Navegação */}
+          <div className="flex items-center gap-1.5 shrink-0">
             {!effectiveIsOnline && (
-              <div className="relative group">
-                <button 
-                  type="button"
-                  onClick={() => setShowOfflineModal(true)}
-                  className="flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-amber-500/25 to-orange-500/25 hover:from-amber-500/40 hover:to-orange-500/40 active:scale-95 text-amber-200 hover:text-white border border-amber-300/60 hover:border-amber-200 px-2 sm:px-2.5 py-1.5 rounded-xl transition-all duration-200 cursor-pointer shadow-sm backdrop-blur-xs select-none h-10"
-                  title="Dispositivo Offline: Os seus dados estão a ser guardados localmente no aparelho"
-                  id="navbar-offline-cloud-status"
-                >
-                  {/* Ícone de nuvem com indicador de erro/alerta */}
-                  <div className="relative flex items-center justify-center shrink-0">
-                    <i className="fa-solid fa-cloud text-amber-300 text-sm sm:text-base animate-pulse"></i>
-                    <span className="absolute -top-1 -right-1.5 bg-red-600 text-white rounded-full w-3.5 h-3.5 flex items-center justify-center text-[7px] font-black border border-[#0f224a] shadow-2xs">
-                      <i className="fa-solid fa-triangle-exclamation text-[6px]"></i>
-                    </span>
-                  </div>
-
-                  <div className="flex flex-col text-left leading-none">
-                    <div className="flex items-center gap-1">
-                      <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-amber-100 flex items-center gap-1">
-                        Offline
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>
-                      </span>
-                    </div>
-                    <span className="hidden sm:inline text-[7.5px] font-bold text-amber-200/90 tracking-tight mt-0.5">
-                      Guardado Localmente
-                    </span>
-                  </div>
-                </button>
-
-                {/* Tooltip Informativo Desktop */}
-                <div className="absolute right-0 top-full mt-2 w-64 bg-slate-900/95 text-white p-3 rounded-2xl shadow-xl border border-amber-400/40 text-left hidden lg:group-hover:block z-50 pointer-events-none backdrop-blur-md">
-                  <div className="flex items-center gap-1.5 text-amber-300 font-black uppercase text-[9.5px] tracking-wider mb-1">
-                    <i className="fa-solid fa-cloud-slash text-xs"></i>
-                    <span>Modo Offline Ativo</span>
-                  </div>
-                  <p className="text-[11px] text-slate-200 leading-relaxed font-medium">
-                    Sem ligação à internet. Não se preocupe: os seus dados e publicações estão a ser <span className="text-amber-300 font-bold">guardados com segurança no armazenamento local</span> deste dispositivo e serão sincronizados assim que a ligação for restabelecida.
-                  </p>
-                </div>
-              </div>
-            )}
-
-            <button 
-              onClick={onToggleNotifications}
-              className="text-white hover:bg-white/15 active:scale-95 transition-all p-2 rounded-xl flex items-center justify-center h-10 w-10 cursor-pointer relative"
-              title="Notificações"
-              aria-label={`Notificações${notificationCount > 0 ? `, ${notificationCount} não lidas` : ""}`}
-            >
-              <i className="fa-solid fa-bell text-lg"></i>
-              {notificationCount > 0 && (
-                <span className="absolute 1 top-1.5 right-1.5 bg-[#008fe2] text-white text-[9px] font-black w-4 h-4 flex items-center justify-center rounded-full border-2 border-[#153268] shadow-xs">
-                  {notificationCount}
-                </span>
-              )}
-            </button>
-
-            {currentUser ? (
-              <div className="flex items-center gap-1.5">
-                <button 
-                  onClick={() => setActiveTab('profile')}
-                  className="w-9 h-9 rounded-full border-2 border-white/60 overflow-hidden bg-white shadow-sm hover:scale-105 active:scale-95 transition-transform cursor-pointer"
-                  title="Ver Perfil"
-                  aria-label="Abrir perfil"
-                >
-                  <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser.id}`} alt="User" />
-                </button>
-                {onLogout && (
-                  <button
-                    onClick={onLogout}
-                    className="text-white/80 hover:text-white hover:bg-white/15 p-2 rounded-xl transition-all active:scale-95 cursor-pointer h-9 w-9 flex items-center justify-center"
-                    title="Terminar Sessão (Sair)"
-                    aria-label="Terminar sessão"
-                    id="header-logout-btn"
-                  >
-                    <i className="fa-solid fa-arrow-right-from-bracket text-sm"></i>
-                  </button>
-                )}
-              </div>
-            ) : (
-              <button 
-                onClick={onLogin}
-                className="bg-white/20 hover:bg-white/30 text-white border border-white/40 px-3.5 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer h-9 shadow-sm"
-              >
-                <i className="fa-solid fa-right-to-bracket text-xs"></i>
-                <span className="hidden sm:inline font-black">{t('Entrar')}</span>
+              <button type="button" onClick={() => setShowOfflineModal(true)} className="h-9 px-2.5 rounded-lg flex items-center gap-1.5 bg-white/10 text-white/90 border border-white/15 hover:bg-white/15 transition" title="Modo offline ativo" aria-label="Modo offline ativo">
+                <i className="fa-solid fa-cloud-slash text-xs"></i><span className="hidden sm:inline text-[10px] font-bold">Offline</span>
               </button>
+            )}
+            <button onClick={onToggleNotifications} className="relative h-10 w-10 rounded-xl flex items-center justify-center hover:bg-white/10 active:scale-95 transition" title="Notificações" aria-label={`Notificações${notificationCount > 0 ? `, ${notificationCount} não lidas` : ""}`}>
+              <i className="fa-solid fa-bell text-base"></i>
+              {notificationCount > 0 && <span className="absolute top-1.5 right-1.5 min-w-4 h-4 px-1 bg-[var(--cb-accent)] text-white text-[9px] font-bold flex items-center justify-center rounded-full border-2 border-[var(--cb-primary)]">{notificationCount > 99 ? '99+' : notificationCount}</span>}
+            </button>
+            {currentUser ? (
+              <button onClick={() => setActiveTab('profile')} className="w-9 h-9 rounded-full border border-white/40 overflow-hidden bg-white active:scale-95 transition" title="Ver perfil" aria-label="Abrir perfil">
+                <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser.id}`} alt="" />
+              </button>
+            ) : (
+              <button onClick={onLogin} className="h-9 px-3 rounded-lg bg-white text-[var(--cb-primary)] text-xs font-bold hover:bg-slate-50 active:scale-95 transition" aria-label="Entrar na conta">Entrar</button>
             )}
           </div>
         </div>
