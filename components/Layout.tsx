@@ -277,9 +277,7 @@ const Layout: React.FC<LayoutProps> = ({
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <i className="fa-solid fa-shield-halved text-base w-5 text-center text-rose-500"></i>
-                  <span>Verificador Anti-Roubo (IMEI)</span>
-                </div>
+                  <i className="fa-solid fa-shield-halved text-base w-5 text-center text-rose-500"></i></div>
               </button>
 
               <button
@@ -509,19 +507,7 @@ const Layout: React.FC<LayoutProps> = ({
           <span className="text-[10px] sm:text-xs mt-0.5 uppercase tracking-wider font-black">{t('Explorar')}</span>
         </button>
 
-        <button 
-          onClick={() => setActiveTab('stolen-checker')}
-          aria-label="Verificador anti-roubo"
-          className={`flex flex-col items-center justify-center py-1.5 px-2 sm:px-3 rounded-2xl transition-all cursor-pointer relative ${
-            activeTab === 'stolen-checker' 
-              ? 'bg-rose-100 text-rose-700 font-black' 
-              : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'
-          }`}
-          title="Verificador Anti-Roubo (IMEI/Série)"
-        >
-          <i className="fa-solid fa-shield-halved text-lg"></i>
-          <span className="text-[10px] sm:text-xs mt-0.5 uppercase tracking-wider font-black">Verificar</span>
-        </button>
+        <button
         
         <button 
           onClick={() => setActiveTab('post')}
