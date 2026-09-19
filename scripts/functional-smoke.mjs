@@ -31,7 +31,8 @@ const tests = [
   ['Auth: registration uses Firebase email auth', /createUserWithEmailAndPassword\(auth, finalEmail, pass\)/.test(files.auth)],
   ['Auth: password recovery uses Firebase reset email', /sendPasswordResetEmail\(auth, email\.trim\(\)/.test(files.auth)],
   ['Auth: logout signs out Firebase', /await signOut\(auth\)/.test(files.auth)],
-  ['Auth: admin login checks allowlist and email verification', /ADMIN_EMAILS\.has\(email\)[\s\S]*signInWithEmailAndPassword\(auth, email, pass\)[\s\S]*emailVerified/.test(files.auth)],\n  ['Index: mobile viewport is configured', /name=["']viewport["'][^>]*width=device-width/.test(files.index)],
+  ['Auth: admin login checks allowlist and email verification', /ADMIN_EMAILS\.has\(email\)[\s\S]*signInWithEmailAndPassword\(auth, email, pass\)[\s\S]*emailVerified/.test(files.auth)],
+  ['Index: mobile viewport is configured', /name=["']viewport["'][^>]*width=device-width/.test(files.index)],
 ];
 
 let failed = false;
