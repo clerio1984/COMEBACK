@@ -3157,7 +3157,7 @@ const AppContent: React.FC = () => {
               <div className="self-end sm:self-auto flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200/80 shrink-0">
                 <button
                   type="button"
-                  onClick={() => setFeedViewMode('feed')
+                  onClick={() => setFeedViewMode('feed')}
                   className={`px-2.5 py-1 rounded-lg text-[10.5px] font-black uppercase transition-all flex items-center gap-1 cursor-pointer ${
                     feedViewMode === 'feed' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'
                   }`}
