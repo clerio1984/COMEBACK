@@ -2104,6 +2104,7 @@ const AppContent: React.FC = () => {
     const fullNotif: Notification = {
       id,
       userId: finalUserId,
+      ...(finalUserId !== currentUser?.id && currentUser?.id ? { senderId: currentUser.id } : {}),
       type: cleanNotif.type || 'MATCH',
       title: cleanNotif.title || '',
       description: cleanNotif.description || '',
