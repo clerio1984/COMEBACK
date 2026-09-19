@@ -102,7 +102,7 @@ const Layout: React.FC<LayoutProps> = ({
 
       {/* Header com a paleta oficial da Souto Digital Serviços */}
       <header className="sticky top-0 relative z-40 bg-gradient-to-r from-[#0f224a] via-[#153268] to-[#008fe2] text-white shadow-lg border-b border-white/10">
-        <div className="px-4 py-3 flex justify-between items-center relative">
+        <div className="px-3 sm:px-4 py-2.5 sm:py-3 flex justify-between items-center relative min-h-[3.75rem]">
           
           <div className="flex items-center gap-2.5 relative z-10">
             {/* Hamburger Button */}
@@ -118,12 +118,12 @@ const Layout: React.FC<LayoutProps> = ({
             </button>
 
             <button type="button" aria-label="Ir para o radar ComeBack" className="flex items-center gap-2.5 cursor-pointer bg-transparent border-0 p-0 text-left" onClick={() => setActiveTab('feed')}>
-              <div className="bg-white rounded-xl h-9 w-9 flex items-center justify-center shadow-sm overflow-hidden shrink-0 p-0.5 border border-white/20">
+              <div className="bg-white rounded-xl h-8 w-8 sm:h-9 sm:w-9 flex items-center justify-center shadow-sm overflow-hidden shrink-0 p-0.5 border border-white/20">
                 <img src={logoUrl} alt="ComeBack" className="w-full h-full object-cover rounded-lg" />
               </div>
               <div>
-                <h1 className="text-lg font-black tracking-tight leading-none text-white">ComeBack</h1>
-                <span className="text-[10px] font-bold text-sky-200 uppercase tracking-widest leading-none block mt-0.5">Perdidos e Achados</span>
+                <h1 className="text-base sm:text-lg font-black tracking-tight leading-none text-white">ComeBack</h1>
+                <span className="text-[8px] sm:text-[10px] font-bold text-sky-200 uppercase tracking-widest leading-none block mt-0.5">Perdidos e Achados</span>
               </div>
             </button>
           </div>
@@ -579,7 +579,7 @@ const Layout: React.FC<LayoutProps> = ({
       )}
 
       {/* Floating Bottom Nav - Styled with Souto Brand Colors */}
-      <nav className="fixed bottom-[max(0.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-[calc(100%-1rem)] max-w-xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 flex justify-between py-1.5 px-2.5 z-50 shadow-[0_10px_35px_rgba(15,34,74,0.18)] rounded-3xl transition-all duration-300 items-center">
+      <nav className="fixed bottom-[max(0.35rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-[calc(100%-0.75rem)] sm:w-[calc(100%-1rem)] max-w-xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 flex justify-between py-1.5 px-2.5 z-50 shadow-[0_10px_35px_rgba(15,34,74,0.18)] rounded-3xl transition-all duration-300 items-center">
         <button 
           onClick={() => setActiveTab('feed')}
           aria-label="Explorar radar"
@@ -604,7 +604,7 @@ const Layout: React.FC<LayoutProps> = ({
           title="Verificador Anti-Roubo (IMEI/Série)"
         >
           <i className="fa-solid fa-shield-halved text-lg"></i>
-          <span className="text-[10px] sm:text-xs mt-0.5 uppercase tracking-wider font-black">Verificador</span>
+          <span className="text-[10px] sm:text-xs mt-0.5 uppercase tracking-wider font-black">Verificar</span>
         </button>
         
         <button 
