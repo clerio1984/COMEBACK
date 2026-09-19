@@ -4166,17 +4166,17 @@ const AppContent: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
                   transition={{ duration: 0.22, ease: "easeInOut" }}
-                  className="px-2 sm:px-4 md:px-6 py-4 pb-36 overflow-y-auto h-full no-scrollbar max-w-5xl mx-auto w-full"
+                  className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 pb-40 overflow-y-auto h-full no-scrollbar max-w-5xl mx-auto w-full"
                 >
-                  <h2 className="text-2xl font-black mb-6 text-gray-900 dark:text-white border-l-8 border-[#fce100] pl-4 uppercase">Novo Registo</h2>
+                  <h2 className="text-xl sm:text-2xl font-black mb-4 sm:mb-6 text-gray-900 dark:text-white border-l-4 sm:border-l-8 border-[#fce100] pl-3 sm:pl-4 uppercase tracking-tight">Novo Registo</h2>
                 {(!currentUser || !currentUser.isVerified) && (
-                  <div className="bg-blue-50 dark:bg-blue-950/40 p-4 rounded-2xl border border-blue-100 dark:border-blue-900/40 mb-6">
+                  <div className="bg-blue-50 dark:bg-blue-950/40 p-3 sm:p-4 rounded-2xl border border-blue-100 dark:border-blue-900/40 mb-4 sm:mb-6">
                     <p className="text-[9px] font-black text-blue-700 dark:text-blue-300 uppercase tracking-tight leading-relaxed">
                       💡 Se você ENCONTROU algo, pode publicar sem conta. Se PERDEU ou foi ROUBADO, precisa de uma conta verificada (BI) para sua segurança.
                     </p>
                   </div>
                 )}
-                <form onSubmit={handlePostSubmit} className="space-y-4 w-full">
+                <form onSubmit={handlePostSubmit} className="space-y-3 sm:space-y-4 w-full">
                   <div>
                     <label className="block text-xs font-black text-gray-500 uppercase mb-1.5">Tipo de Registo / Ocorrência</label>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -4446,7 +4446,7 @@ const AppContent: React.FC = () => {
                        ))}
                     </div>
                   </div>
-                  <div className="bg-gray-50/90 dark:bg-slate-900/60 p-4 rounded-2xl sm:rounded-3xl space-y-4 border border-gray-200/70 dark:border-slate-800/80 w-full overflow-hidden text-left">
+                  <div className="bg-white dark:bg-slate-900/80 p-3 sm:p-4 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 border border-gray-200/80 dark:border-slate-800/80 w-full overflow-hidden text-left shadow-sm">
                     <div className="w-full min-w-0 space-y-1.5">
                       <label className="block text-[11px] sm:text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1.5">
                         Título do Item <span className="text-red-500">*</span>
@@ -4952,7 +4952,7 @@ const AppContent: React.FC = () => {
 
                   <button 
                     disabled={isSubmitting || publishCooldown > 0} 
-                    className="w-full bg-gradient-to-r from-[#008fe2] via-[#1d4ed8] to-[#153268] hover:opacity-95 text-white py-4 px-6 rounded-2xl font-black text-sm shadow-md uppercase tracking-wider disabled:opacity-60 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2.5 cursor-pointer border-b-2 border-[#0f224a]"
+                    className="sticky bottom-20 sm:bottom-4 z-30 w-full bg-gradient-to-r from-[#008fe2] via-[#1d4ed8] to-[#153268] hover:opacity-95 text-white py-3.5 sm:py-4 px-4 sm:px-6 rounded-2xl font-black text-sm shadow-[0_10px_30px_rgba(15,34,74,0.22)] uppercase tracking-wider disabled:opacity-60 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2.5 cursor-pointer border-b-2 border-[#0f224a] backdrop-blur-sm"
                     id="submit-new-item-btn"
                   >
                     {isSubmitting ? (
