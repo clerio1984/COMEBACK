@@ -301,3 +301,19 @@
   animation: spinSlow 12s linear infinite;
 }
 
+
+
+/* Mobile product ergonomics */
+@media (max-width: 639px) {
+  html { -webkit-text-size-adjust: 100%; }
+  body { min-width: 320px; }
+  input, select, textarea { font-size: 16px !important; }
+  button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+  button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 3px solid rgba(0,143,226,.32) !important;
+    outline-offset: 2px;
+  }
+}
+@media (min-width: 640px) {
+  input, select, textarea { font-size: inherit; }
+}
