@@ -178,6 +178,7 @@ export interface Notification {
   itemId: string;
   timestamp: string;
   isRead: boolean;
+  senderId?: string;
 }
 
 export interface Comment {
