@@ -317,3 +317,188 @@
 @media (min-width: 640px) {
   input, select, textarea { font-size: inherit; }
 }
+
+
+/* =========================================================
+   ComeBack Design System — Professional Neutral Palette
+   One primary, one accent, three semantic states.
+   ========================================================= */
+:root {
+  --cb-primary: #163a63;
+  --cb-primary-strong: #0f2d4f;
+  --cb-accent: #1f78b4;
+  --cb-accent-soft: #eaf4fb;
+  --cb-surface: #ffffff;
+  --cb-surface-soft: #f6f8fa;
+  --cb-page: #f4f6f8;
+  --cb-border: #e2e7ec;
+  --cb-text: #17212b;
+  --cb-muted: #66727f;
+  --cb-success: #16805c;
+  --cb-success-soft: #eaf7f2;
+  --cb-warning: #a96f00;
+  --cb-warning-soft: #fff7e5;
+  --cb-danger: #c43d4b;
+  --cb-danger-soft: #fceff1;
+}
+
+/* Reduce visual noise from decorative utility colors in the normal product UI. */
+body:not(.high-contrast) {
+  background: var(--cb-page) !important;
+  color: var(--cb-text);
+}
+
+body:not(.high-contrast) .bg-white {
+  background-color: var(--cb-surface) !important;
+}
+
+body:not(.high-contrast) .bg-gray-50,
+body:not(.high-contrast) .bg-slate-50,
+body:not(.high-contrast) .bg-gray-100,
+body:not(.high-contrast) .bg-slate-100 {
+  background-color: var(--cb-surface-soft) !important;
+}
+
+body:not(.high-contrast) .border-gray-100,
+body:not(.high-contrast) .border-gray-200,
+body:not(.high-contrast) .border-slate-100,
+body:not(.high-contrast) .border-slate-200 {
+  border-color: var(--cb-border) !important;
+}
+
+/* Primary brand family: navy/blue only. */
+body:not(.high-contrast) .text-souto-navy,
+body:not(.high-contrast) .text-souto-midnight,
+body:not(.high-contrast) .text-souto-800,
+body:not(.high-contrast) .text-souto-900 {
+  color: var(--cb-primary) !important;
+}
+
+body:not(.high-contrast) .bg-souto-navy,
+body:not(.high-contrast) .bg-souto-midnight,
+body:not(.high-contrast) .bg-souto-800,
+body:not(.high-contrast) .bg-souto-900 {
+  background-color: var(--cb-primary) !important;
+}
+
+/* Calm the common blue/cyan variants into one accent family. */
+body:not(.high-contrast) .text-blue-500,
+body:not(.high-contrast) .text-blue-600,
+body:not(.high-contrast) .text-blue-700,
+body:not(.high-contrast) .text-cyan-500,
+body:not(.high-contrast) .text-cyan-600,
+body:not(.high-contrast) .text-sky-500,
+body:not(.high-contrast) .text-sky-600 {
+  color: var(--cb-accent) !important;
+}
+
+body:not(.high-contrast) .bg-blue-50,
+body:not(.high-contrast) .bg-blue-100,
+body:not(.high-contrast) .bg-cyan-50,
+body:not(.high-contrast) .bg-sky-50 {
+  background-color: var(--cb-accent-soft) !important;
+}
+
+/* Semantic colors stay meaningful, but lose neon/glow treatment. */
+body:not(.high-contrast) .text-emerald-500,
+body:not(.high-contrast) .text-emerald-600,
+body:not(.high-contrast) .text-green-500,
+body:not(.high-contrast) .text-green-600 {
+  color: var(--cb-success) !important;
+}
+
+body:not(.high-contrast) .bg-emerald-50,
+body:not(.high-contrast) .bg-emerald-100,
+body:not(.high-contrast) .bg-green-50,
+body:not(.high-contrast) .bg-green-100 {
+  background-color: var(--cb-success-soft) !important;
+}
+
+body:not(.high-contrast) .text-amber-500,
+body:not(.high-contrast) .text-amber-600,
+body:not(.high-contrast) .text-orange-500,
+body:not(.high-contrast) .text-orange-600 {
+  color: var(--cb-warning) !important;
+}
+
+body:not(.high-contrast) .bg-amber-50,
+body:not(.high-contrast) .bg-amber-100,
+body:not(.high-contrast) .bg-orange-50 {
+  background-color: var(--cb-warning-soft) !important;
+}
+
+body:not(.high-contrast) .text-red-500,
+body:not(.high-contrast) .text-red-600,
+body:not(.high-contrast) .text-rose-500,
+body:not(.high-contrast) .text-rose-600 {
+  color: var(--cb-danger) !important;
+}
+
+body:not(.high-contrast) .bg-red-50,
+body:not(.high-contrast) .bg-red-100,
+body:not(.high-contrast) .bg-rose-50,
+body:not(.high-contrast) .bg-rose-100 {
+  background-color: var(--cb-danger-soft) !important;
+}
+
+/* Remove rainbow-like visual treatments from the verified badge. */
+body:not(.high-contrast) .item-card-verified-badge {
+  background: var(--cb-accent-soft) !important;
+  background-image: none !important;
+  color: var(--cb-primary) !important;
+  border: 1px solid #c8ddec !important;
+  box-shadow: none !important;
+  animation: none !important;
+  letter-spacing: .08em !important;
+}
+
+body:not(.high-contrast) .item-card-verified-badge::before {
+  color: var(--cb-accent) !important;
+  animation: none !important;
+  text-shadow: none !important;
+}
+
+body:not(.high-contrast) .item-card-verified-badge::after {
+  display: none !important;
+}
+
+body:not(.high-contrast) .item-card:hover .item-card-verified-badge {
+  filter: none !important;
+  transform: none !important;
+}
+
+/* Product-level elevation: subtle, consistent, never glossy. */
+body:not(.high-contrast) .shadow-2xl,
+body:not(.high-contrast) .shadow-xl {
+  box-shadow: 0 12px 30px rgba(15, 45, 79, .08) !important;
+}
+
+body:not(.high-contrast) .shadow-lg {
+  box-shadow: 0 8px 22px rgba(15, 45, 79, .07) !important;
+}
+
+body:not(.high-contrast) .shadow-md {
+  box-shadow: 0 4px 14px rgba(15, 45, 79, .06) !important;
+}
+
+/* Avoid decorative hover enlargement across the application. */
+body:not(.high-contrast) .cluster-marker-selected > div {
+  filter: none !important;
+  animation: none !important;
+}
+
+@media (max-width: 639px) {
+  body:not(.high-contrast) .shadow-2xl,
+  body:not(.high-contrast) .shadow-xl,
+  body:not(.high-contrast) .shadow-lg {
+    box-shadow: 0 4px 16px rgba(15, 45, 79, .06) !important;
+  }
+
+  body:not(.high-contrast) .rounded-3xl {
+    border-radius: 1.125rem !important;
+  }
+
+  body:not(.high-contrast) .rounded-2xl {
+    border-radius: 1rem !important;
+  }
+}
