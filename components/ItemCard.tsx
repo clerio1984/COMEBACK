@@ -63,11 +63,11 @@ const ItemCard: React.FC<ItemCardProps> = React.memo(({
             onViewDetails(item);
           }
         }}
-        className="bg-white rounded-2xl p-3 shadow-sm hover:shadow-md transition-all duration-200 border border-slate-200 flex items-center gap-3 sm:gap-3.5 cursor-pointer active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#008fe2] focus-visible:ring-offset-2"
+        className="bg-white rounded-2xl p-2.5 sm:p-3 shadow-[0_1px_3px_rgba(15,34,74,0.08)] hover:shadow-md transition-all duration-200 border border-slate-200/80 flex items-center gap-3 cursor-pointer active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#008fe2] focus-visible:ring-offset-2"
         id={`item-card-list-${item.id}`}
       >
         {/* Left Thumbnail */}
-        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-slate-100 shrink-0 relative flex items-center justify-center border border-gray-100">
+        <div className="w-[76px] h-[76px] sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-slate-100 shrink-0 relative flex items-center justify-center border border-gray-100">
           <MediaViewer 
             src={item.imageUrl || (item.imageUrls && item.imageUrls[0]) || ''} 
             category={item.category}
@@ -83,23 +83,23 @@ const ItemCard: React.FC<ItemCardProps> = React.memo(({
         {/* Right Info */}
         <div className="flex-1 min-w-0 py-0.5">
           <div className="flex items-start justify-between gap-2">
-            <span className="text-xs font-black uppercase text-[#008fe2] tracking-wider truncate">
+            <span className="text-[10px] sm:text-xs font-black uppercase text-[#008fe2] tracking-wider truncate">
               {item.category}
             </span>
-            <span className={`shrink-0 text-[9px] font-black uppercase px-2 py-1 rounded-full ${getStatusBadgeStyle()}`}>
+            <span className={`shrink-0 text-[8px] sm:text-[9px] font-black uppercase px-2 py-1 rounded-full ${getStatusBadgeStyle()}`}>
               {getStatusLabel()}
             </span>
           </div>
 
-          <h3 className="font-bold text-[#153268] text-sm truncate uppercase mt-0.5">
+          <h3 className="font-bold text-[#153268] text-sm sm:text-[15px] truncate uppercase mt-0.5">
             {item.title}
           </h3>
 
-          <p className="text-xs text-gray-500 truncate mt-0.5">
+          <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">
             {item.description || 'Sem descrição adicional'}
           </p>
 
-          <div className="flex items-center justify-between text-[11px] text-gray-400 mt-1">
+          <div className="flex items-center gap-2 text-[10px] sm:text-[11px] text-gray-400 mt-1">
             <span className="truncate">{item.province || item.location || 'Moçambique'}</span>
             <span className="truncate">Publicado por {item.ownerName || 'Anónimo'}</span>
           </div>
@@ -120,14 +120,14 @@ const ItemCard: React.FC<ItemCardProps> = React.memo(({
           onViewDetails(item);
         }
       }}
-      className={`item-card bg-white rounded-2xl shadow-sm overflow-hidden transition-all duration-200 flex flex-col justify-between border border-gray-150 hover:shadow-md hover:border-gray-300 active:scale-[0.99] cursor-pointer ${
+      className={`item-card bg-white rounded-2xl shadow-[0_1px_3px_rgba(15,34,74,0.08)] overflow-hidden transition-all duration-200 flex flex-col justify-between border border-slate-200/80 hover:shadow-md hover:border-slate-300 active:scale-[0.99] cursor-pointer ${
         isReunited ? 'opacity-90' : ''
       }`}
       onClick={() => onViewDetails(item)}
       id={`item-card-${item.id}`}
     >
       {/* Media thumbnail container */}
-      <div className="relative overflow-hidden aspect-square bg-slate-50 flex items-center justify-center w-full border-b border-gray-100 p-2">
+      <div className="relative overflow-hidden aspect-[4/3] sm:aspect-square bg-slate-50 flex items-center justify-center w-full border-b border-gray-100 p-1.5 sm:p-2">
         <div className="w-full h-full rounded-xl overflow-hidden relative flex items-center justify-center">
           <MediaViewer 
             src={item.imageUrl || (item.imageUrls && item.imageUrls[0]) || ''} 
@@ -141,7 +141,7 @@ const ItemCard: React.FC<ItemCardProps> = React.memo(({
         </div>
 
         {/* Top-Right Status Badge (PERDIDO/ACHADO) */}
-        <div className={`absolute top-3.5 right-3.5 px-2.5 py-0.5 rounded text-[9px] font-black uppercase shadow-xs tracking-wider z-10 ${getStatusBadgeStyle()}`}>
+        <div className={`absolute top-2 right-2 sm:top-3.5 sm:right-3.5 px-2 py-1 rounded-full text-[8px] sm:text-[9px] font-black uppercase shadow-xs tracking-wider z-10 ${getStatusBadgeStyle()}`}>
           {getStatusLabel()}
         </div>
 
@@ -163,9 +163,9 @@ const ItemCard: React.FC<ItemCardProps> = React.memo(({
       </div>
       
       {/* Card Content */}
-      <div className="p-3 sm:p-3.5 space-y-1.5 flex-1 flex flex-col justify-between text-left">
+      <div className="p-3 space-y-1.5 flex-1 flex flex-col justify-between text-left">
         <div>
-          <h3 className="font-bold text-[#153268] line-clamp-1 text-sm uppercase leading-snug tracking-tight hover:text-[#008fe2] transition-colors">
+          <h3 className="font-bold text-[#153268] line-clamp-2 text-sm uppercase leading-snug tracking-tight hover:text-[#008fe2] transition-colors">
             {item.title}
           </h3>
 
