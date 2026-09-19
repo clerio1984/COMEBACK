@@ -2132,7 +2132,8 @@ const AppContent: React.FC = () => {
           title: fullNotif.title,
           body: fullNotif.description,
           data: {
-            url: fullNotif.itemId ? `/?itemId=${fullNotif.itemId}` : '/'
+            url: fullNotif.itemId ? `/?itemId=${fullNotif.itemId}` : '/',
+            itemId: fullNotif.itemId || undefined
           }
         })
       }).catch(err => console.warn("Erro ao despachar Push Notification:", err));
