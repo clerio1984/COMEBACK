@@ -98,10 +98,10 @@ const Layout: React.FC<LayoutProps> = ({
   };
 
   return (
-    <div className="min-h-screen flex flex-col w-full bg-[#f0f3f8] text-gray-900 relative overflow-x-hidden transition-all duration-300">
+    <div className="min-h-[100dvh] flex flex-col w-full bg-[#f0f3f8] text-gray-900 relative overflow-x-hidden transition-all duration-300">
 
       {/* Header com a paleta oficial da Souto Digital Serviços */}
-      <header className="relative z-40 bg-gradient-to-r from-[#0f224a] via-[#153268] to-[#008fe2] text-white shadow-lg border-b border-white/10">
+      <header className="sticky top-0 relative z-40 bg-gradient-to-r from-[#0f224a] via-[#153268] to-[#008fe2] text-white shadow-lg border-b border-white/10">
         <div className="px-4 py-3 flex justify-between items-center relative">
           
           <div className="flex items-center gap-2.5 relative z-10">
@@ -453,7 +453,7 @@ const Layout: React.FC<LayoutProps> = ({
         </div>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto pb-28 bg-[#f8fafc] dark:bg-slate-905 text-gray-900 dark:text-gray-100 relative transition-all duration-300">
+      <main className="flex-1 min-w-0 overflow-y-auto pb-[7.5rem] sm:pb-28 bg-[#f8fafc] dark:bg-slate-905 text-gray-900 dark:text-gray-100 relative transition-all duration-300">
         {/* Banner de Sincronização offline Persistente e Detalhado com Contagem da Fila */}
         <OfflineSyncBanner 
           isOnline={isOnline} 
@@ -579,10 +579,11 @@ const Layout: React.FC<LayoutProps> = ({
       )}
 
       {/* Floating Bottom Nav - Styled with Souto Brand Colors */}
-      <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-lg bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 flex justify-between py-1.5 px-2.5 z-50 shadow-[0_10px_35px_rgba(15,34,74,0.18)] rounded-3xl transition-all duration-300 items-center">
+      <nav className="fixed bottom-[max(0.5rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-[calc(100%-1rem)] max-w-xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 flex justify-between py-1.5 px-2.5 z-50 shadow-[0_10px_35px_rgba(15,34,74,0.18)] rounded-3xl transition-all duration-300 items-center">
         <button 
           onClick={() => setActiveTab('feed')}
-          className={`flex flex-col items-center justify-center py-1.5 px-2.5 sm:px-3 rounded-2xl transition-all cursor-pointer relative ${
+          aria-label="Explorar radar"
+          className={`flex flex-col items-center justify-center py-1.5 px-2 sm:px-3 rounded-2xl transition-all cursor-pointer relative ${
             activeTab === 'feed' 
               ? 'bg-[#008fe2]/15 text-[#008fe2] font-black' 
               : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'
@@ -594,7 +595,8 @@ const Layout: React.FC<LayoutProps> = ({
 
         <button 
           onClick={() => setActiveTab('stolen-checker')}
-          className={`flex flex-col items-center justify-center py-1.5 px-2.5 sm:px-3 rounded-2xl transition-all cursor-pointer relative ${
+          aria-label="Verificador anti-roubo"
+          className={`flex flex-col items-center justify-center py-1.5 px-2 sm:px-3 rounded-2xl transition-all cursor-pointer relative ${
             activeTab === 'stolen-checker' 
               ? 'bg-rose-100 text-rose-700 font-black' 
               : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'
@@ -607,7 +609,8 @@ const Layout: React.FC<LayoutProps> = ({
         
         <button 
           onClick={() => setActiveTab('post')}
-          className={`flex flex-col items-center justify-center py-2 px-3.5 rounded-2xl transition-all cursor-pointer relative shadow-sm active:scale-95 ${
+          aria-label="Publicar registo"
+          className={`flex flex-col items-center justify-center py-2 px-3 rounded-2xl transition-all cursor-pointer relative shadow-sm active:scale-95 ${
             activeTab === 'post' 
               ? 'bg-gradient-to-r from-[#008fe2] to-[#153268] text-white font-black ring-2 ring-[#008fe2]/40' 
               : 'bg-gradient-to-r from-[#008fe2] to-[#153268] text-white hover:opacity-95'
@@ -621,7 +624,8 @@ const Layout: React.FC<LayoutProps> = ({
 
         <button 
           onClick={() => setActiveTab('about')}
-          className={`flex flex-col items-center justify-center py-1.5 px-2.5 sm:px-3 rounded-2xl transition-all cursor-pointer relative ${
+          aria-label="Sobre o ComeBack"
+          className={`flex flex-col items-center justify-center py-1.5 px-2 sm:px-3 rounded-2xl transition-all cursor-pointer relative ${
             activeTab === 'about' 
               ? 'bg-[#008fe2]/15 text-[#008fe2] font-black' 
               : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'
@@ -633,7 +637,8 @@ const Layout: React.FC<LayoutProps> = ({
         
         <button 
           onClick={() => setActiveTab('profile')}
-          className={`flex flex-col items-center justify-center py-1.5 px-2.5 sm:px-3 rounded-2xl transition-all cursor-pointer relative ${
+          aria-label="Meu perfil"
+          className={`flex flex-col items-center justify-center py-1.5 px-2 sm:px-3 rounded-2xl transition-all cursor-pointer relative ${
             activeTab === 'profile' 
               ? 'bg-[#008fe2]/15 text-[#008fe2] font-black' 
               : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white'
@@ -719,7 +724,7 @@ const Layout: React.FC<LayoutProps> = ({
 
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .clip-triangle {
+        @media (max-width: 639px) {\n          body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }\n          button, a, input, select, textarea { touch-action: manipulation; }\n          #hamburger-drawer { width: min(88vw, 22rem); }\n          #hamburger-drawer .overflow-y-auto { -webkit-overflow-scrolling: touch; }\n          #mobile-bottom-offline-pill { bottom: calc(4.75rem + env(safe-area-inset-bottom)); max-width: calc(100vw - 2rem); }\n          nav.fixed { padding-bottom: calc(0.375rem + env(safe-area-inset-bottom)); }\n          nav.fixed button { min-width: 0; flex: 1 1 0%; min-height: 3.25rem; }\n          nav.fixed button span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 4.5rem; }\n        }\n        @media (min-width: 640px) { nav.fixed { bottom: 1rem; } }\n        @media (prefers-reduced-motion: reduce) {\n          *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; }\n        }\n\n        .clip-triangle {
           clip-path: polygon(0 0, 100% 50%, 0 100%);
         }
         .no-scrollbar::-webkit-scrollbar {
