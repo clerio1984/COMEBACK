@@ -27,7 +27,11 @@ const tests = [
   ['Rules: no public allow-all write rule', !/allow\s+read,\s*write:\s*if\s+true\s*;/.test(files.rules)],
   ['Rules: cross-user notification requires sender identity', /request\.resource\.data\.senderId\s*==\s*request\.auth\.uid/.test(files.rules)],
   ['Layout: mobile controls expose ARIA labels', /aria-label=/.test(files.layout)],
-  ['Index: mobile viewport is configured', /name=["']viewport["'][^>]*width=device-width/.test(files.index)],
+  ['Auth: email login uses Firebase password auth', /signInWithEmailAndPassword\(auth, email\.trim\(\), pass\)/.test(files.auth)],
+  ['Auth: registration uses Firebase email auth', /createUserWithEmailAndPassword\(auth, finalEmail, pass\)/.test(files.auth)],
+  ['Auth: password recovery uses Firebase reset email', /sendPasswordResetEmail\(auth, email\.trim\(\)/.test(files.auth)],
+  ['Auth: logout signs out Firebase', /await signOut\(auth\)/.test(files.auth)],
+  ['Auth: admin login checks allowlist and email verification', /ADMIN_EMAILS\.has\(email\)[\s\S]*signInWithEmailAndPassword\(auth, email, pass\)[\s\S]*emailVerified/.test(files.auth)],\n  ['Index: mobile viewport is configured', /name=["']viewport["'][^>]*width=device-width/.test(files.index)],
 ];
 
 let failed = false;
